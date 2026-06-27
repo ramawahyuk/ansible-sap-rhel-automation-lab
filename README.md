@@ -89,7 +89,6 @@ This project automates the full lifecycle of SAP software deployment using Ansib
 | Environment Validation | ✅ Tested | Pre-SWPM checklist automated |
 | SWPM Automation | 🔄 In Progress | Manual SWPM execution follows automated prep |
 | Post-Install Automation | 📋 Planned | Future phase |
----
 
 ---
 ## Prerequisites
