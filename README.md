@@ -23,7 +23,6 @@
 - [Ansible Vault](#ansible-vault)
 - [Installation Sequence](#installation-sequence)
 - [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
 
 ---
 
@@ -381,18 +380,6 @@ Step 4: sap_swpm                     ← ABAP stack installation
 | Ping fails | SSH key not copied | Run `ssh-copy-id root@192.168.1.17` |
 | Wrong IP binding | SAP binding to `ens224` instead of `ens160` | Set explicit `sap_ip: "192.168.1.17"` in `sap_common.yml` |
 | Collection roles fail | Missing `fedora.linux_system_roles` dependency | Add to `requirements.yml` and reinstall |
-
----
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature`
-3. Commit your changes: `git commit -m 'Add: your feature description'`
-4. Push to the branch: `git push origin feature/your-feature`
-5. Open a Pull Request
-
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting PRs.
 
 ---
 
