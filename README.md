@@ -160,7 +160,7 @@ Before running any playbooks, complete the steps in [`docs/prerequisites.md`](do
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/ramawahyukurniawan/ansible-sap-rhel-automation-lab.git
+git clone https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab.git
 cd ansible-sap-rhel-automation-lab
 ```
 
@@ -277,15 +277,3 @@ This automation supports a broader SAP home lab environment:
 
 ---
 
-## Author
-
-**Rama Wahyu Kurniawan**
-- MSc Computer Science — Universiti Putra Malaysia (GPA 3.77)
-- System Engineer | VMware Infrastructure | SAP Basis (Learning) | Ansible Automation
-- LinkedIn: [linkedin.com/in/ramawahyukurniawan](https://linkedin.com/in/ramawahyukurniawan)
-
----
-
-## License
-
-MIT License — feel free to use and adapt for your own SAP lab environments.
