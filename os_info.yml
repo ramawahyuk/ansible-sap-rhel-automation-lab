@@ -1,0 +1,119 @@
+---
+# ================================================================
+# Playbook: os_info.yml
+# Purpose : Gather and display SAP-relevant system information
+# Updated : Modern ansible_facts[] syntax (ansible-core 2.21+)
+# Run with: ansible-playbook playbooks/os_info.yml
+# READ-ONLY - Makes ZERO changes to the target system
+# ================================================================
+
+- name: SAP System Information Gathering
+  hosts: sap_servers
+  become: false
+  gather_facts: true
+  tasks:
+
+    # -- Section 1: Identity ------------------------------------
+    - name: Display system identity
+      ansible.builtin.debug:
+        msg:
+          - "=================================================="
+          - " SAP TARGET SYSTEM INFORMATION"
+          - "=================================================="
+          - " Hostname : {{ ansible_facts['hostname'] }}"
+          - " FQDN     : {{ ansible_facts['fqdn'] }}"
+          - " SAP SID  : {{ sap_sid }}"
+          - " SAP IP   : {{ sap_ip }}"
+          - " SAP Domain: {{ sap_domain }}"
+          - "=================================================="
+
+    # -- Section 2: Operating System ----------------------------
+    - name: Display OS information
+      ansible.builtin.debug:
+        msg:
+          - " OS     : {{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_version'] }}"
+          - " Kernel : {{ ansible_facts['kernel'] }}"
+          - " Arch   : {{ ansible_facts['architecture'] }}"
+          - " TZ     : {{ ansible_facts['date_time']['tz'] }}"
+
+    # -- Section 3: Hardware Resources --------------------------
+    - name: Display hardware resources
+      ansible.builtin.debug:
+        msg:
+          - " vCPU : {{ ansible_facts['processor_vcpus'] }}"
+          - " RAM  : {{ ansible_facts['memtotal_mb'] }} MB ({{ (ansible_facts['memtotal_mb'] / 1024) | round(1) }} GB)"
+          - " Free : {{ ansible_facts['memfree_mb'] }} MB"
+          - " Swap : {{ ansible_facts['swaptotal_mb'] }} MB"
+
+    # -- Section 4: SAP-Critical Filesystem Check ---------------
+    - name: Display SAP filesystem status
+      ansible.builtin.debug:
+        msg: >-
+          {{ item.mount }} |
+          Total: {{ (item.size_total / 1073741824) | round(1) }} GB |
+          Free: {{ (item.size_available / 1073741824) | round(1) }} GB |
+          Used: {{ ((item.size_total - item.size_available) / item.size_total * 100) | round(1) }}%
+      loop: "{{ ansible_facts['mounts'] }}"
+      when: item.mount in ['/', '/oracle', '/sapmnt', '/usr/sap', '/boot']
+
+    # -- Section 5: Python Interpreter Verification -------------
+    - name: Verify Python interpreter on managed node
+      ansible.builtin.command:
+        cmd: "{{ ansible_python_interpreter }} --version"
+      register: python_version_output
+      changed_when: false
+
+    - name: Display Python version
+      ansible.builtin.debug:
+        msg: " Python : {{ python_version_output.stdout }}"
+
+    # -- Section 6: SAP Repository Verification ----------------
+    - name: Check SAP repositories are active
+      ansible.builtin.command:
+        cmd: dnf repolist
+      register: repo_list
+      changed_when: false
+
+    - name: Display SAP repository status
+      ansible.builtin.debug:
+        msg:
+          - " SAP Repos Active:"
+          - "{{ repo_list.stdout_lines | select('search', 'sap') | list }}"
+
+    # -- Section 7: OS compatibility check ---------------------
+    - name: Confirm OS is supported for SAP installation
+      ansible.builtin.debug:
+        msg: " OS CHECK: RedHat {{ ansible_facts['distribution_version'] }} SUPPORTED"
+      when:
+        - ansible_facts['distribution'] == "RedHat"
+        - ansible_facts['distribution_major_version'] == "8"
+
+    - name: WARN - OS may not be supported
+      ansible.builtin.debug:
+        msg: " WARNING: {{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_version'] }} not tested"
+      when: ansible_facts['distribution'] != "RedHat"
+
+    # -- Section 8: Oracle Readiness ---------------------------
+    - name: Check Oracle base directory exists
+      ansible.builtin.stat:
+        path: "{{ oracle_base }}"
+      register: oracle_base_stat
+
+    - name: Display Oracle base directory status
+      ansible.builtin.debug:
+        msg:
+          - " Oracle Base : {{ oracle_base }}"
+          - " Exists      : {{ oracle_base_stat.stat.exists }}"
+          - " Is Dir      : {{ oracle_base_stat.stat.isdir if oracle_base_stat.stat.exists else 'N/A' }}"
+
+    # -- Final Summary -----------------------------------------
+    - name: Final readiness summary
+      ansible.builtin.debug:
+        msg:
+          - "=================================================="
+          - " PRE-INSTALL READINESS: COMPLETE"
+          - " Target : {{ ansible_facts['fqdn'] }}"
+          - " SID    : {{ sap_sid }}"
+          - " DB     : Oracle {{ oracle_version }}"
+          - " Status : Ready for sap_general_preconfigure"
+          - "=================================================="

@@ -1,0 +1,39 @@
+---
+# ================================================================
+# Playbook: vault_test.yml
+# Purpose : Verify vault variables decrypt and load correctly
+#           WITHOUT printing actual password values
+# Run with: ansible-playbook playbooks/vault_test.yml
+# ================================================================
+
+- name: Vault Variable Verification
+  hosts: sap_servers
+  gather_facts: false
+  tasks:
+
+    - name: Confirm vault variables are defined and non-empty
+      ansible.builtin.assert:
+        that:
+          - oracle_sys_password is defined
+          - oracle_sys_password | length > 0
+          - sap_master_password is defined
+          - sap_master_password | length > 0
+          - sap_swpm_db_schema_password is defined
+          - sap_swpm_db_schema_password | length > 0
+        success_msg: "All vault variables loaded and non-empty"
+        fail_msg: "One or more vault variables missing or empty"
+
+    - name: Show vault variable STATUS (not values)
+      ansible.builtin.debug:
+        msg:
+          - "=================================================="
+          - " VAULT VARIABLE STATUS CHECK"
+          - "=================================================="
+          - " oracle_sys_password              : {{ 'DEFINED (' + (oracle_sys_password | length | string) + ' chars)' if oracle_sys_password is defined else 'MISSING' }}"
+          - " oracle_system_password           : {{ 'DEFINED (' + (oracle_system_password | length | string) + ' chars)' if oracle_system_password is defined else 'MISSING' }}"
+          - " sap_master_password              : {{ 'DEFINED (' + (sap_master_password | length | string) + ' chars)' if sap_master_password is defined else 'MISSING' }}"
+          - " sap_swpm_db_schema_password      : {{ 'DEFINED (' + (sap_swpm_db_schema_password | length | string) + ' chars)' if sap_swpm_db_schema_password is defined else 'MISSING' }}"
+          - " sap_swpm_diagnostics_agent_pwd   : {{ 'DEFINED (' + (sap_swpm_diagnostics_agent_password | length | string) + ' chars)' if sap_swpm_diagnostics_agent_password is defined else 'MISSING' }}"
+          - "=================================================="
+          - " Vault decryption: SUCCESSFUL"
+          - "=================================================="

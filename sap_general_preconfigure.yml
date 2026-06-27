@@ -1,0 +1,77 @@
+---
+# ================================================================
+# Playbook: sap_general_preconfigure.yml
+# Purpose : Configure OS baseline for SAP software installation
+# Implements SAP Notes: 2002167, 2772999, 3108302 (RHEL8)
+# Role    : community.sap_install.sap_general_preconfigure
+# Target  : saperp (192.168.1.17)
+# Run with: ansible-playbook playbooks/sap_general_preconfigure.yml
+# ================================================================
+
+- name: SAP General OS Pre-Configuration
+  hosts: sap_servers
+  become: true
+  gather_facts: true
+
+  pre_tasks:
+    - name: Verify target hostname before making changes
+      ansible.builtin.assert:
+        that:
+          - ansible_facts['hostname'] == "saperp"
+          - ansible_facts['distribution'] == "RedHat"
+          - ansible_facts['distribution_major_version'] == "8"
+        success_msg: >
+          Target verified: {{ ansible_facts['fqdn'] }} |
+          {{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_version'] }}
+        fail_msg: >
+          Unexpected target: {{ ansible_facts['fqdn'] }}.
+          Aborting to prevent running on wrong server.
+
+    - name: Display pre-configuration summary
+      ansible.builtin.debug:
+        msg:
+          - "Target   : {{ ansible_facts['fqdn'] }}"
+          - "SAP SID  : {{ sap_sid }}"
+          - "SAP IP   : {{ sap_ip }}"
+          - "OS       : {{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_version'] }}"
+          - "RAM      : {{ ansible_facts['memtotal_mb'] }} MB"
+          - "SELinux  : will be set to {{ sap_general_preconfigure_selinux_mode }}"
+          - "Repos    : management disabled (sap_general_preconfigure_enable_repos: false)"
+          - "Reboot   : automatic if required"
+
+  roles:
+    - role: community.sap_install.sap_general_preconfigure
+
+  post_tasks:
+    - name: Verify SAP kernel parameters applied
+      ansible.builtin.command:
+        cmd: sysctl -a
+      register: sysctl_output
+      changed_when: false
+
+    - name: Check critical SAP kernel parameter - vm.max_map_count
+      ansible.builtin.debug:
+        msg: >
+          vm.max_map_count = {{
+            sysctl_output.stdout_lines |
+            select('search', 'vm.max_map_count') |
+            list | first | default('NOT FOUND') }}
+
+    - name: Verify SELinux mode
+      ansible.builtin.command:
+        cmd: getenforce
+      register: selinux_status
+      changed_when: false
+
+    - name: Display SELinux status
+      ansible.builtin.debug:
+        msg: "SELinux mode: {{ selinux_status.stdout }}"
+
+    - name: Final status
+      ansible.builtin.debug:
+        msg:
+          - "========================================"
+          - " sap_general_preconfigure: COMPLETE"
+          - " Host   : {{ ansible_facts['fqdn'] }}"
+          - " Status : OS prepared for SAP software"
+          - "========================================"

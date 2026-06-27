@@ -1,0 +1,11 @@
+---
+# ================================================================
+# Variables applied to ALL hosts
+# ================================================================
+
+# Timezone - SAP requires consistent timezone across landscape
+# WIB = Western Indonesian Time (UTC+7)
+timezone: Asia/Jakarta
+
+# DNS domain
+dns_domain: tes.com

@@ -1,0 +1,41 @@
+---
+# ================================================================
+# Playbook: swpm_install.yml
+# Purpose : SAP ABAP NetWeaver installation via SWPM (silent)
+# Role    : community.sap_install.sap_swpm
+# Target  : saperp (192.168.1.17)
+# Run with: ansible-playbook playbooks/swpm_install.yml
+# Prerequisites:
+#   - sap_general_preconfigure.yml completed
+#   - sap_netweaver_preconfigure.yml completed (if applicable)
+#   - Oracle DB 19c installed and running
+#   - SAP SWPM media staged at {{ sap_software_base }}
+# ================================================================
+
+- name: SAP ABAP NetWeaver Installation via SWPM
+  hosts: sap_servers
+  become: true
+  gather_facts: true
+
+  pre_tasks:
+    - name: Verify target and prerequisites
+      ansible.builtin.assert:
+        that:
+          - ansible_facts['hostname'] == "saperp"
+          - ansible_facts['distribution'] == "RedHat"
+          - ansible_facts['distribution_major_version'] == "8"
+        success_msg: "Target verified: {{ ansible_facts['fqdn'] }}"
+        fail_msg: "Unexpected target: {{ ansible_facts['fqdn'] }}. Aborting."
+
+    - name: Display installation summary
+      ansible.builtin.debug:
+        msg:
+          - "Target     : {{ ansible_facts['fqdn'] }}"
+          - "SAP SID    : {{ sap_sid }}"
+          - "Instance   : {{ sap_instance_number }}"
+          - "DB         : Oracle {{ oracle_version }}"
+          - "Media Path : {{ sap_software_base }}"
+
+  roles:
+    - role: sap-netweaver-preconfigure
+    - role: community.sap_install.sap_swpm

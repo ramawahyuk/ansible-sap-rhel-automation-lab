@@ -1,0 +1,54 @@
+---
+# ================================================================
+# Variables for ALL SAP servers (sap_servers group)
+# ================================================================
+
+# -- SAP System Identity ----------------------------------------
+# SID: 3-character SAP System Identifier
+sap_sid: "ERP"
+
+# SAP instance number (00-99)
+sap_instance_number: "00"
+
+# SAP system domain
+sap_domain: "tes.com"
+
+# -- Network - Explicit SAP IP ----------------------------------
+# saperp has 3 IPs. We explicitly tell SAP roles which one to use.
+# This prevents SAP from binding to the wrong interface (ens224).
+sap_ip: "192.168.1.17"
+sap_hostname: "saperp"
+sap_fqdn: "saperp.tes.com"
+
+# -- Software staging location -----------------------------------
+# SAP media staged on the SAP server itself (not controller)
+# Controller disk is too small (47GB) to hold installation media
+sap_software_base: "/oracle/software"
+
+# -- sap_general_preconfigure role variables --------------------
+# Do not enable repos - all 5 SAP repos already active on saperp
+sap_general_preconfigure_enable_repos: false
+
+# Allow automatic reboot if kernel parameters require it
+sap_general_preconfigure_reboot_ok: true
+
+# Do not fail if reboot needed - we handle it with reboot_ok: true
+sap_general_preconfigure_fail_if_reboot_required: false
+
+# SELinux - SAP requires permissive
+sap_general_preconfigure_selinux_mode: "permissive"
+
+# Use community collection (not Red Hat subscription collection)
+sap_general_preconfigure_system_roles_collection: "fedora.linux_system_roles"
+
+# Hostname update in /etc/hosts - use our explicit variables
+sap_general_preconfigure_modify_etc_hosts: true
+
+# -- Password References (values stored encrypted in vault.yml) --
+# Roles use these clean names - vault prefix stays internal
+oracle_sys_password: "{{ vault_oracle_sys_password }}"
+oracle_system_password: "{{ vault_oracle_system_password }}"
+oracle_dbsnmp_password: "{{ vault_oracle_dbsnmp_password }}"
+sap_master_password: "{{ vault_sap_master_password }}"
+sap_swpm_db_schema_password: "{{ vault_sap_db_schema_password }}"
+sap_swpm_diagnostics_agent_password: "{{ vault_sap_diagnostics_agent_password }}"

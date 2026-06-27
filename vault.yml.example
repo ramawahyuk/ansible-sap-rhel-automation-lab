@@ -1,0 +1,33 @@
+# ================================================================
+# VAULT FILE - SAP Server Credentials
+# This file MUST be AES-256 encrypted via Ansible Vault before commit.
+#
+# Encrypt  : ansible-vault encrypt inventory/group_vars/sap_servers/vault.yml
+# Edit     : ansible-vault edit inventory/group_vars/sap_servers/vault.yml
+# View     : ansible-vault view inventory/group_vars/sap_servers/vault.yml
+#
+# WARNING  : This template shows variable NAMES only.
+#            Replace placeholder values with real passwords,
+#            then encrypt before committing.
+# ================================================================
+
+# -- Oracle DB Passwords ----------------------------------------
+# Oracle SYS - primary DBA superuser account
+vault_oracle_sys_password: "CHANGE_ME"
+
+# Oracle SYSTEM - secondary DBA account
+vault_oracle_system_password: "CHANGE_ME"
+
+# Oracle DBSNMP - monitoring account
+vault_oracle_dbsnmp_password: "CHANGE_ME"
+
+# -- SAP Master Password ----------------------------------------
+# Sets SAP*, DDIC, and other default user passwords during SWPM
+vault_sap_master_password: "CHANGE_ME"
+
+# -- SAP Schema Passwords ----------------------------------------
+# SAP database schema user (SAPSR3, SAPHANADB, etc.)
+vault_sap_db_schema_password: "CHANGE_ME"
+
+# SAP diagnostics agent password
+vault_sap_diagnostics_agent_password: "CHANGE_ME"
