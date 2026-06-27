@@ -1,8 +1,8 @@
 # 🚀 ansible-sap-rhel-automation
 
-> **Ansible automation for SAP software installation on Red Hat Enterprise Linux 8**  
-> A production-ready collection of Ansible roles, playbooks, and encrypted vault patterns for automating SAP ABAP + Oracle DB deployments on RHEL.
-
+> **Ansible automation framework for SAP pre-installation preparation and environment standardization on Red Hat Enterprise Linux (RHEL 8).**  
+> This repository documents my hands-on lab work building a repeatable, automated SAP deployment pipeline replacing manual OS preparation steps with idempotent Ansible playbooks validated against a two-node lab environment.
+> 
 [![Ansible](https://img.shields.io/badge/Ansible-2.21.1-red?logo=ansible)](https://www.ansible.com/)
 [![RHEL](https://img.shields.io/badge/RHEL-8.x-red?logo=redhat)](https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux)
 [![SAP](https://img.shields.io/badge/SAP-ABAP%20%7C%20Oracle%2019c-blue?logo=sap)](https://www.sap.com/)
@@ -44,11 +44,11 @@ This project automates the full lifecycle of SAP software deployment using Ansib
 
 ---
 
-## Architecture
+## Lab Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│              ANSIBLE CONTROLLER (ansnode)                │
+│              ANSIBLE CONTROLLER (ansnode)               │
 │              IP: 192.168.1.18 | RHEL 8.1                │
 │              Ansible 2.21.1 | Python 3.12               │
 │                                                         │
@@ -57,7 +57,7 @@ This project automates the full lifecycle of SAP software deployment using Ansib
 │              SSH (passwordless, key-based)              │
 │                                    ↓                    │
 ├─────────────────────────────────────────────────────────┤
-│              SAP SERVER (saperp)                         │
+│              SAP SERVER (saperp)                        │
 │              IP: 192.168.1.17 | RHEL 8.1                │
 │              Python 3.12 | /oracle (dedicated mount)    │
 │                                                         │
@@ -65,6 +65,18 @@ This project automates the full lifecycle of SAP software deployment using Ansib
 │  ✔ Oracle 19c DB    ✔ SAP ABAP NetWeaver               │
 └─────────────────────────────────────────────────────────┘
 ```
+---
+
+| Node | Hostname | IP Address | Role |
+|------|----------|------------|------|
+| ansnode | ansnode.local | 192.168.1.18 | Ansible Controller |
+| saperp | saperp.local | 192.168.1.17 | SAP Application + DB Host |
+
+**SAP System Details:**
+- SID: `ERP`
+- Database: Oracle Database 19c
+- SAP Product: SAP ECC6 EHP8
+- OS: RHEL 8.10
 
 ---
 
@@ -144,7 +156,7 @@ subscription-manager repos \
 ### 1. Clone and Enter the Project
 
 ```bash
-git clone https://github.com/<your-username>/ansible-sap-rhel-automation.git
+git clone https://github.com/ramawahyuk/ansible-sap-rhel-automation.git
 cd ansible-sap-rhel-automation
 ```
 
