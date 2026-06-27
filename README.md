@@ -29,7 +29,7 @@
 
 ## Overview
 
-This project automates the full lifecycle of SAP software deployment using Ansible — from OS baseline configuration to Oracle DB installation and SAP ABAP stack setup via SWPM. It implements security best practices (AES-256 vault encryption), idempotent role execution, and follows the `community.sap_install` collection conventions used in enterprise SAP projects.
+This project automates the full lifecycle of SAP software deployment using Ansible from OS baseline configuration to Oracle DB installation and SAP ABAP stack setup via SWPM. It implements security best practices (AES-256 vault encryption), idempotent role execution, and follows the `community.sap_install` collection conventions used in enterprise SAP projects.
 
 **What this project automates:**
 
