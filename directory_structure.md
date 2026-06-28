@@ -69,7 +69,7 @@ vi inventory/group_vars/sap_servers/sap_common.yml
 ```
 vi inventory/group_vars/sap_db/oracle.yml
 ```
-###Verify Inventory Structure
+### Verify Inventory Structure
 
 ```
 cd ~/sap-ansible
