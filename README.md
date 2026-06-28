@@ -286,11 +286,44 @@ ansible-playbook playbooks/os_info.yml
 ```
 Run [os_info.yml](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/os_info.yml) to gather and display SAP-relevant system information from saperp before any installation begins, read-only and makes zero changes to the target system.
 
-Expected Output:
+Expected Output (partially):
 
 <img width="1026" height="666" alt="image" src="https://github.com/user-attachments/assets/bb7bdb46-1f42-4dc2-9f69-bca248dfc3e0" />
 <img width="1028" height="586" alt="image" src="https://github.com/user-attachments/assets/b5e2b793-f6e9-4268-b3fa-7ae163571cf0" />
 <img width="1026" height="600" alt="image" src="https://github.com/user-attachments/assets/e34bcf61-459d-47ec-bd82-558fd79cf1a1" />
+
+
+based on that we can see confirmed functional results such as:
+
+```
+Hostname    : saperp          ✅
+FQDN        : saperp.tes.com  ✅
+SAP SID     : ERP             ✅
+SAP IP      : 192.168.1.17    ✅
+
+OS          : RedHat 8.10     ✅
+Kernel      : 4.18.0-553      ✅
+CPUs        : 8 vCPU          ✅
+RAM         : 31.1 GB         ✅
+
+/           : 59.9GB  | 49.2GB free  | 17.8% used  ✅
+/sapmnt     : 139.9GB | 138.9GB free | 0.7% used   ✅
+/oracle     : 299.8GB | 297.7GB free | 0.7% used   ✅
+/boot       : 50.0GB  | 49.3GB free  | 1.3% used   ✅
+/usr/sap    : 149.9GB | 148.7GB free | 0.8% used   ✅
+/home       : skipped  ← Correctly excluded by 'when' filter ✅
+
+Python      : 3.12.12         ✅
+Oracle base : /oracle exists  ✅ Is directory ✅
+
+SAP Repos   : sap-netweaver-rpms ✅
+              sap-solutions-rpms ✅
+
+OS Check    : RedHat 8.10 SUPPORTED ✅
+
+```
+
+
 
 ---
 
