@@ -394,15 +394,30 @@ sap_common.yml      → references vault variables with {{ vault_* }} syntax
 The encrypted file can be safely committed to version control. Only someone with the vault password can decrypt and read the values.
 
 ```
-WITHOUT VAULT:                    WITH VAULT:
-────────────────────────────────  ──────────────────────────────────
-oracle.yml:                       vault.yml:
-  oracle_sys_password: Oracle123    $ANSIBLE_VAULT;1.1;AES256
-                                    3462396661613538626532386562...
-  ↑ Anyone who can read             ↑ Useless without the vault
-    the file sees this                password to decrypt it
-```
+      WITHOUT VAULT                                   WITH VAULT
 
+┌──────────────────────┐                    ┌─────────────────────────────┐
+│       oracle.yml     │                    │          vault.yml          │
+│                      │                    │                             │
+│ oracle_sys_password: │                    │ $ANSIBLE_VAULT;1.1;AES256   │
+│ Oracle123            │                    │ 3462396661613538...         │
+└──────────┬───────────┘                    └──────────────┬──────────────┘
+           │                                               │
+           ▼                                               ▼
+    👁️ Anyone can read                           🔒 Encrypted Data
+           │                                               │
+           ▼                                               ▼
+    Password Exposed                           Requires Vault Password
+                                                           │
+                                                           ▼
+                                                  🔑 Ansible Vault
+                                                           │
+                                                           ▼
+                                                 Decrypts in Memory Only
+                                                           │
+                                                           ▼
+                                               oracle_sys_password=*****
+```
 
 ### Common Vault Operations
 
