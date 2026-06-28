@@ -45,33 +45,6 @@ ansible-vault encrypt inventory/group_vars/sap_servers/vault.yml
 
 <img width="1536" height="1024" alt="How Ansible vault works" src="https://github.com/user-attachments/assets/2eae2833-2548-4777-943b-26b1c4ce9380" />
 
-
-```
-ENCRYPTION (you run once):
-  ansible-vault encrypt inventory/group_vars/sap_servers/vault.yml
-        |
-        v
-  Ansible uses AES-256-CBC
-  Key derived from your vault password
-        |
-        v
-  Produces: $ANSIBLE_VAULT;1.1;AES256
-            346239666161353...
-
-DECRYPTION (Ansible runs automatically at playbook start):
-  ansible-playbook playbooks/sap_general_preconfigure.yml
-        |
-        v
-  Ansible reads .vault_pass
-  Decrypts vault variables in memory
-  Variables available to roles as plain strings
-  Never written to disk unencrypted
-        |
-        v
-  Role receives: oracle_sys_password = "your-actual-password"
-  (in memory only - never logged, never stored plain)
-```
-
 ---
 
 ## Variable Naming Convention
