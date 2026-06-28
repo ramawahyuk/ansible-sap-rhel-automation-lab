@@ -14,7 +14,7 @@
 ## 📋 Table of Contents
 
 - [Overview](#overview)
-- [Architecture](#architecture)
+- [Architecture](#lab-architecture)
 - [Prerequisites](#prerequisites)
 - [Project Structure](#project-structure)
 - [Quick Start](#quick-start)
@@ -46,6 +46,7 @@ This project automates the full lifecycle of SAP software deployment using Ansib
 ## Lab Architecture
 
 ```
+
 ┌─────────────────────────────────────────────────────────┐
 │              ANSIBLE CONTROLLER (ansnode)               │
 │              IP: 192.168.1.18 | RHEL 8.1                │
@@ -63,6 +64,7 @@ This project automates the full lifecycle of SAP software deployment using Ansib
 │  ✔ OS configured    ✔ SAP Host Agent                   │
 │  ✔ Oracle 19c DB    ✔ SAP ABAP NetWeaver               │
 └─────────────────────────────────────────────────────────┘
+
 ```
 ---
 
@@ -194,6 +196,10 @@ ssh-keygen -t rsa -b 4096
 ssh-copy-id root@192.168.1.17
 ssh root@192.168.1.17   # verify passwordless access
 ```
+Test ssh access to the sap server, it should not require any password
+
+<img width="688" height="113" alt="image" src="https://github.com/user-attachments/assets/f2acdec9-9fb4-4dae-b69b-cc1553170c84" />
+
 
 ### 5. Install Collections
 
@@ -218,21 +224,76 @@ ansible-vault encrypt inventory/group_vars/sap_servers/vault.yml
 
 ### 8. Verify Everything
 
+Check the connectivity between Ansible controller & Managed node
+
 ```bash
 # Test connectivity
+cd ~/sap-ansible
 ansible -m ping sap_servers
+```
+From inside ~/sap-ansible, run ping without specifying -i because [ansible.cfg](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/ansible.cfg) now defines the default inventory
 
+Expected Output:
+
+<img width="461" height="93" alt="image" src="https://github.com/user-attachments/assets/083f3197-e884-48e0-b0d9-bcad122cb1a6" />
+
+---
+
+
+
+Check the timezone of Managed node
+
+```
 # Verify variables load
 ansible -m debug -a "var=vars" saperp 2>/dev/null | grep -E "sap_|oracle_|timezone"
 
+```
+
+Expected Output:
+
+<img width="921" height="183" alt="image" src="https://github.com/user-attachments/assets/dc56f87d-ea81-4272-a909-01b466530732" />
+
+---
+
+
+
+Verify Vault Decryption Works in a Playbook 
+
+```
 # Run vault verification
 ansible-playbook playbooks/vault_test.yml
 
-# Run pre-install system report (read-only)
-ansible-playbook playbooks/os_info.yml
 ```
 
+Create a vault test playbook that confirms decryption works without printing the actual passwords, named as [vault_test.yml](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/vault_test.yml):
+
+Expected Output:
+
+<img width="1031" height="644" alt="image" src="https://github.com/user-attachments/assets/af5fbff3-303c-498f-bb98-7ee3393c8e4a" />
+
 ---
+
+
+
+Gather SAP System Information
+
+```
+# Run pre-install system report (read-only)
+ansible-playbook playbooks/os_info.yml
+
+```
+Run [os_info.yml](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/os_info.yml) to gather and display SAP-relevant system information from saperp before any installation begins, read-only and makes zero changes to the target system.
+
+Expected Output:
+
+<img width="1026" height="666" alt="image" src="https://github.com/user-attachments/assets/bb7bdb46-1f42-4dc2-9f69-bca248dfc3e0" />
+<img width="1028" height="586" alt="image" src="https://github.com/user-attachments/assets/b5e2b793-f6e9-4268-b3fa-7ae163571cf0" />
+<img width="1026" height="600" alt="image" src="https://github.com/user-attachments/assets/e34bcf61-459d-47ec-bd82-558fd79cf1a1" />
+
+---
+
+
+
 
 ## Configuration
 
