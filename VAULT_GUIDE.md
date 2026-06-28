@@ -1,3 +1,4 @@
+<img width="1536" height="1024" alt="How Ansible vault works" src="https://github.com/user-attachments/assets/b0053220-e3e9-47f9-8917-b1fcaeb71ef4" />
 # Ansible Vault Guide — SAP Credentials Management
 
 This document covers everything you need to work with the encrypted vault files in this project.
@@ -42,6 +43,9 @@ ansible-vault encrypt inventory/group_vars/sap_servers/vault.yml
 ---
 
 ## How It Works
+
+<img width="1536" height="1024" alt="How Ansible vault works" src="https://github.com/user-attachments/assets/2eae2833-2548-4777-943b-26b1c4ce9380" />
+
 
 ```
 ENCRYPTION (you run once):
