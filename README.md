@@ -182,7 +182,7 @@ ansible --version | head -2
 
 ### 3. Configure Hosts
 
-Edit `/etc/hosts` on the controller:
+Edit `/etc/hosts` on the controller and SAP server:
 
 ```
 192.168.1.18  ansnode.tes.com  ansnode
