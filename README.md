@@ -402,7 +402,7 @@ ansible-playbook playbooks/sap_general_preconfigure.yml
 
 ## Ansible Vault
 
-This project uses **file-level AES-256 encryption** for all credentials. The pattern:
+This project encrypts variable files using **file-level AES-256 encryption** for all credentials with the following pattern:
 
 ```
 vault.yml           → encrypted (committed to git)
