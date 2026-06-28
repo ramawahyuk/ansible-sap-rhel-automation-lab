@@ -13,6 +13,32 @@ Storing SAP and Oracle passwords in plain text is a common mistake that exposes 
 
 Ansible Vault solves this with AES-256-CBC encryption. The encrypted file is safe to commit to version control. Only someone with the vault password can decrypt it.
 
+There are two Vault patterns
+
+1. Encrypt entire fileused for variables files, where the whole file becomens encrypted ciphertext, and only can be edited with `ansible-vault edit`.
+2. Encrypt individual string used in YAML, which only the value is encrypted, and the variable name remains readable.
+
+For this SAP automation we use patterns number one, where we encrypt entire vault file. This is cleaner, easier to manage, and the standard used by community.sap_install documentation.
+
+```
+#Encrypt entire vault file
+ansible-vault encrypt inventory/group_vars/sap_servers/vault.yml
+
+```
+
+### Variables Encrypted in `vault.yml`
+
+| Variable | Purpose | Used By |
+|----------|---------|---------|
+| `vault_oracle_sys_password` | Oracle SYS DBA superuser | `sap_anydb_install_oracle` |
+| `vault_oracle_system_password` | Oracle SYSTEM DBA | `sap_anydb_install_oracle` |
+| `vault_oracle_dbsnmp_password` | Oracle monitoring account | `sap_anydb_install_oracle` |
+| `vault_sap_master_password` | SAP master (SAP*, DDIC) | `sap_swpm` |
+| `vault_sap_db_schema_password` | SAP DB schema (SAPSR3) | `sap_swpm` |
+| `vault_sap_diagnostics_agent_password` | SAP diagnostics agent | `sap_swpm` |
+
+> **Production Note:** Replace `.vault_pass` file with HashiCorp Vault, CyberArk, or AAP Credentials Manager.
+
 ---
 
 ## How It Works
@@ -62,18 +88,76 @@ oracle_sys_password: "{{ vault_oracle_sys_password }}"
 
 ---
 
-## Common Operations
+## Create vault password file
 
-### Create vault password file
+Create on `controller node`/ `ansnode`, the vault password file stores the password that encrypts/decrypts all vault files. It must be protected and never committed to version control:
+
+```bash
+cd ~/sap-ansible
+
+```
+Create vault password file
+
 ```bash
 echo "YourStrongVaultPassword" > .vault_pass
+
+#restrict permissions where only root can read it
 chmod 600 .vault_pass
+
+#verify permission
+ls -la .vault_pass
+
 ```
+
+<img width="419" height="48" alt="image" src="https://github.com/user-attachments/assets/e7822ba2-fe23-4d10-855e-751e4d76d6db" />
+
+Then we need to tell [ansible.cfg](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/ansible.cfg) to use this file automatically, so no need to pass `--vault-password-file` on every command:
+
+Add this file reference into ansible.cfg.
+
+```
+# ── Vault configuration ──────────────────────────────────────
+# Automatically use this file for vault decryption
+vault_password_file = .vault_pass
+
+```
+
+And to prevent accidental commits, we need to add `.vault_pass` to `.gitignore`:
+
+```
+echo ".vault_pass" > .gitignore
+echo "ansible.log" >> .gitignore
+echo "/tmp/ansible_facts_cache" >> .gitignore
+
+cat .gitignore
+
+```
+
+<img width="381" height="75" alt="image" src="https://github.com/user-attachments/assets/db05d597-153b-482d-9319-feb151df3d0f" />
+
+## Create the Encrypted Vault Files
+
+Create SAP server vault file and put it at [~/sap-ansible/inventory/group_vars/sap_servers/vault.yml](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/vault.yml.example) then encrypt it
+
 
 ### Encrypt a file
 ```bash
 ansible-vault encrypt inventory/group_vars/sap_servers/vault.yml
 ```
+
+### To verify it is actully encrypted check the vault.yml
+
+```
+cd ~/sap-ansible
+cat inventory/group_vars/sap_servers/vault.yml
+
+```
+
+It is expected that it is already change into ciphertext and not readable:
+
+<img width="657" height="106" alt="image" src="https://github.com/user-attachments/assets/f3cbfd14-40e0-4908-b0fd-6dfa5c766200" />
+
+---
 
 ### Decrypt temporarily (use with care)
 ```bash
@@ -101,7 +185,43 @@ ansible-vault rekey inventory/group_vars/sap_servers/vault.yml
 
 ---
 
+## Create password reference to stored the value in encrypted
+
+add this into our [sap_common.yml](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/sap_common.yml) file
+
+```
+# ── Password References (values stored encrypted in vault.yml) ──
+oracle_sys_password: "{{ vault_oracle_sys_password }}"
+oracle_system_password: "{{ vault_oracle_system_password }}"
+oracle_dbsnmp_password: "{{ vault_oracle_dbsnmp_password }}"
+sap_master_password: "{{ vault_sap_master_password }}"
+sap_swpm_db_schema_password: "{{ vault_sap_db_schema_password }}"
+sap_swpm_diagnostics_agent_password: "{{ vault_sap_diagnostics_agent_password }}"
+
+```
+Then to verify Vault decryption works on our system, we need to create [vault_test](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/vault_test.yml) playbook to confirms it without printing the actual password:
+
+```
+cd ~/sap-ansible
+
+#run this to test if its works or not 
+ansible-playbook playbooks/vault_test.yml
+
+```
+
+Expected Results:
+
+
+<img width="722" height="662" alt="image" src="https://github.com/user-attachments/assets/02393d09-2cec-4862-92c5-335b127a5f06" />
+
+
+The character count confirms the vault decrypted to the correct password length without ever displaying the actual values. This is the correct way to verify vault configuration in a runbook or audit.
+
+---
+
 ## Troubleshooting
+
+> This is some of error i founf during the works on this part:
 
 ### "Attempting to decrypt but no vault secrets found"
 
