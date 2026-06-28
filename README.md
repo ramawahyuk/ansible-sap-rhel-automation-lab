@@ -45,27 +45,8 @@ This project automates the full lifecycle of SAP software deployment using Ansib
 
 ## Lab Architecture
 
-```
+<img width="1536" height="1024" alt="Ansible SAP Automation Architecture" src="https://github.com/user-attachments/assets/2da30101-55f2-407c-9e49-948f84a486ac" />
 
-┌─────────────────────────────────────────────────────────┐
-│              ANSIBLE CONTROLLER (ansnode)               │
-│              IP: 192.168.1.18 | RHEL 8.1                │
-│              Ansible 2.21.1 | Python 3.12               │
-│                                                         │
-│  ansible.cfg → inventory → group_vars → playbooks       │
-│                                    ↓                    │
-│              SSH (passwordless, key-based)              │
-│                                    ↓                    │
-├─────────────────────────────────────────────────────────┤
-│              SAP SERVER (saperp)                        │
-│              IP: 192.168.1.17 | RHEL 8.1                │
-│              Python 3.12 | /oracle (dedicated mount)    │
-│                                                         │
-│  ✔ OS configured    ✔ SAP Host Agent                   │
-│  ✔ Oracle 19c DB    ✔ SAP ABAP NetWeaver               │
-└─────────────────────────────────────────────────────────┘
-
-```
 ---
 
 | Node | Hostname | IP Address | Role |
@@ -423,7 +404,6 @@ oracle.yml:                       vault.yml:
 ```
 
 
-
 ### Common Vault Operations
 
 ```bash
@@ -452,6 +432,8 @@ ansible-vault decrypt inventory/group_vars/sap_servers/vault.yml
 | `vault_sap_diagnostics_agent_password` | SAP diagnostics agent | `sap_swpm` |
 
 > **Production Note:** Replace `.vault_pass` file with HashiCorp Vault, CyberArk, or AAP Credentials Manager.
+
+For further explanation see [Vault Guide](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/VAULT_GUIDE.md) and [Security](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/SECURITY.md).
 
 ---
 
