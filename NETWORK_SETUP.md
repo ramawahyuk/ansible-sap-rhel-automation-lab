@@ -73,3 +73,22 @@ hostname          # should return: saperp
 hostname -f       # should return: saperp.tes.com
 ping saperp       # should resolve to 192.168.1.17
 ```
+
+## NOTES
+
+During the setup using two NIC, at first internet connection won't connect despite ping into 8.8.8.8 success, but when try to ping into google.com it's hang and don't show any reply back. But at that time, there is a clue why the connection were not established. The reply from ping test to google.com shows that it uses ipv6 instead of ipv4. Therefore I decided to disable all of the ipv6 service on both nodes, and retry again to ping google and use dnf repolist, which is succesfull. 
+
+```
+#Disable the ipv6 services
+nmcli con mod <device_name> ipv6.method "disabled"
+sysctl -w net.ipv6.conf.all.disable_ipv6=1
+sysctl -w net.ipv6.conf.default.disable_ipv6=1
+
+#restart network adapter
+nmcli con down <device_name> && nmcli con up <device_name>
+systemctl restart NetworkManager
+
+#check /etc/resolv.conf
+cat /etc/resolv.conf
+
+```
