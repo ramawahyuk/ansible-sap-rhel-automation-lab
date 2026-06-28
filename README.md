@@ -201,7 +201,7 @@ Test ssh access to the sap server, it should not require any password
 <img width="688" height="113" alt="image" src="https://github.com/user-attachments/assets/f2acdec9-9fb4-4dae-b69b-cc1553170c84" />
 
 
-Assume that the [directory]() structure already made 
+Assume that the [directory](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/directory_structure.md) structure already made 
 
 ### 5.Install Collections
 
