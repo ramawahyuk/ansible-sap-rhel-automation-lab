@@ -84,8 +84,8 @@ This project automates the full lifecycle of SAP software deployment using Ansib
 |-------|--------|-------|
 | OS Preparation | ✅ Tested | Validated on RHEL 8.10 |
 | SAP Prerequisites | ✅ Tested | Validated against SAP ECC6 requirements |
-| Oracle Prerequisites | ✅ Tested | Validated against Oracle 19c requirements |
-| Environment Validation | ✅ Tested | Pre-SWPM checklist automated |
+| Oracle Prerequisites | 🔄 In Progress | Validated against Oracle 19c requirements |
+| Environment Validation | 🔄 In Progress | Pre-SWPM checklist automated |
 | SWPM Automation | 🔄 In Progress | Manual SWPM execution follows automated prep |
 | Post-Install Automation | 📋 Planned | Future phase |
 
