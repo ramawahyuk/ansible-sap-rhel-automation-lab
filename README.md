@@ -347,14 +347,14 @@ OS Check    : RedHat 8.10 SUPPORTED ✅
 
 ### Network Configuration (Dual NIC Setup)
 
-This lab uses two network adapters — bridge (internal SAP network) and NAT (internet):
+This lab uses two network adapters on both the controller and SAP server to separate SAP traffic from internet access (needed for collection installation).
 
-```bash
-nmcli con show
-nmcli con mod ens224 ipv4.method auto ipv4.never-default no   # NAT = default route
-nmcli con mod ens160 ipv4.never-default yes                   # Bridge = SAP network
-ip route   # verify default is via NAT adapter
-```
+## Adapter Roles
+
+| Adapter | Type | Purpose | IP Range |
+|---------|------|---------|----------|
+| `ens160` | Bridge (Host-Only) | SAP internal network — Ansible SSH, SAP ports | 192.168.1.x |
+| `ens224` | NAT | Internet access — package/collection downloads | DHCP (NAT) |
 
 ---
 
@@ -362,7 +362,7 @@ ip route   # verify default is via NAT adapter
 
 ### `os_info.yml` — Pre-Install System Report
 
-**Read-only. Makes zero changes.**
+Run [os_info.yml](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/os_info.yml) which is **Read-only. Makes zero changes.**
 
 ```bash
 ansible-playbook playbooks/os_info.yml
@@ -374,15 +374,21 @@ Checks: hostname/FQDN, OS version, vCPU, RAM, swap, SAP-critical filesystems (`/
 
 ### `vault_test.yml` — Vault Verification
 
+Create a [vault test](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/vault_test.yml) playbook that confirms decryption works without printing the actual passwords:
+
 ```bash
 ansible-playbook playbooks/vault_test.yml
 ```
 
-Confirms all vault variables are defined and non-empty **without printing actual password values**. Shows character counts only.
+This confirms all vault variables are defined and non-empty **without printing actual password values**. Shows character counts only.
 
 ---
 
 ### `sap_general_preconfigure.yml` — OS Baseline (Step 1)
+
+Create [sap_general_configure.yml](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/sap_general_preconfigure.yml) to configure OS baseline for SAP software installation to implements SAP Notes: 2002167, 2772999, 3108302 (RHEL8), based on the community.sap_install.sap_general_preconfigure roles.
+
+Do a dry run first, to evaluate every task and reports what it would do without making any actual changes. This is how we validate a playbook before committing to real changes on a SAP server.
 
 ```bash
 # Dry run first
@@ -391,8 +397,6 @@ ansible-playbook playbooks/sap_general_preconfigure.yml --check
 # Execute
 ansible-playbook playbooks/sap_general_preconfigure.yml
 ```
-
-Implements SAP Notes 2002167, 2772999, 3108302. Sets kernel parameters, installs required packages, configures SELinux to permissive, sets up tmpfs, verifies `/etc/hosts`.
 
 ---
 
