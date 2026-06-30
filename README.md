@@ -481,17 +481,9 @@ Step 4: sap_swpm                     ← ABAP stack installation
 
 ---
 
-## Troubleshooting
+## Known Issue
 
-| Symptom | Root Cause | Fix |
-|---------|-----------|-----|
-| `No vault secrets found` | `vault_password_file` outside `[defaults]` section | Move inside `[defaults]`, use absolute path `/root/sap-ansible/.vault_pass` |
-| `Vault not found` | UTF-8 corruption in `ansible.cfg` from box-drawing chars | Rewrite with pure ASCII heredoc |
-| `Vault not found` | Tilde `~` not expanded in `ansible.cfg` | Use absolute path `/root/sap-ansible/` |
-| `YAML parse error` | Stray `"` at end of `vault.yml` from `vi` | Remove via `ansible-vault edit` |
-| Ping fails | SSH key not copied | Run `ssh-copy-id root@192.168.1.17` |
-| Wrong IP binding | SAP binding to `ens224` instead of `ens160` | Set explicit `sap_ip: "192.168.1.17"` in `sap_common.yml` |
-| Collection roles fail | Missing `fedora.linux_system_roles` dependency | Add to `requirements.yml` and reinstall |
+See docs/troubleshooting.md for the current Python interpreter / libselinux blocker on the SELinux boolean task, including diagnostic commands and candidate fixes.
 
 ---
 
