@@ -45,7 +45,8 @@ This project automates the full lifecycle of SAP software deployment using Ansib
 
 ## Lab Architecture
 
-<img width="1536" height="1024" alt="Ansible SAP Automation Architecture" src="https://github.com/user-attachments/assets/2da30101-55f2-407c-9e49-948f84a486ac" />
+<img width="1535" height="1024" alt="lab achitecture" src="https://github.com/user-attachments/assets/a68109ae-7292-4516-bbf7-22ca2f8d4ae0" />
+
 
 ---
 
