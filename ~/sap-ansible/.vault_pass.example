@@ -1,0 +1,7 @@
+# ==================================================================================
+# Create vault password file
+# the vault password file stores the password that encrypt/descrypt all vault files
+# ==================================================================================
+
+SapVault@Lab2025
+
