@@ -38,14 +38,14 @@ OS-level baseline tuning for any SAP installation: kernel parameters
 (SAP Note 2002167), SELinux → permissive, package groups, `/etc/hosts`
 entries, tmpfs sizing (SAP Note 941735), locale, process resource limits.
 
-**Status:** Blocked on the `Set SELinux booleans` task — Python interpreter
-mismatch on the target. See troubleshooting doc.
+
 
 <img width="730" height="855" alt="image" src="https://github.com/user-attachments/assets/8ef81b6d-2d57-4534-bcb9-f6b3907aae59" />
 <img width="730" height="861" alt="image" src="https://github.com/user-attachments/assets/82e19e0d-a206-4060-bc17-5bc526e11ba9" />
 
-
-
+>
+>**Status:** Step 1 of the installation sequence is complete ✅.
+>
 
 
 
