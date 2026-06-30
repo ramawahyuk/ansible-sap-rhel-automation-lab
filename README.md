@@ -248,7 +248,7 @@ ansible-playbook playbooks/vault_test.yml
 
 ```
 
-Create a vault test playbook that confirms decryption works without printing the actual passwords, named as [vault_test.yml](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/vault_test.yml):
+Create a vault test playbook that confirms decryption works without printing the actual passwords, named as [vault_test.yml](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/playbooks/vault_test.yml):
 
 Expected Output:
 
@@ -265,7 +265,7 @@ Gather SAP System Information
 ansible-playbook playbooks/os_info.yml
 
 ```
-Run [os_info.yml](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/os_info.yml) to gather and display SAP-relevant system information from saperp before any installation begins, read-only and makes zero changes to the target system.
+Run [os_info.yml](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/playbooks/os_info.yml) to gather and display SAP-relevant system information from saperp before any installation begins, read-only and makes zero changes to the target system.
 
 Expected Output (partially):
 
@@ -343,7 +343,7 @@ This lab uses two network adapters on both the controller and SAP server to sepa
 
 ### `os_info.yml` — Pre-Install System Report
 
-Run [os_info.yml](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/os_info.yml) which is **Read-only. Makes zero changes.**
+Run [os_info.yml](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/playbooks/os_info.yml) which is **Read-only. Makes zero changes.**
 
 ```bash
 ansible-playbook playbooks/os_info.yml
@@ -355,7 +355,7 @@ Checks: hostname/FQDN, OS version, vCPU, RAM, swap, SAP-critical filesystems (`/
 
 ### `vault_test.yml` — Vault Verification
 
-Create a [vault test](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/vault_test.yml) playbook that confirms decryption works without printing the actual passwords:
+Create a [vault test](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/playbooks/vault_test.yml) playbook that confirms decryption works without printing the actual passwords:
 
 ```bash
 ansible-playbook playbooks/vault_test.yml
@@ -367,7 +367,7 @@ This confirms all vault variables are defined and non-empty **without printing a
 
 ### `sap_general_preconfigure.yml` — OS Baseline (Step 1)
 
-Create [sap_general_configure.yml](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/sap_general_preconfigure.yml) to configure OS baseline for SAP software installation to implements SAP Notes: 2002167, 2772999, 3108302 (RHEL8), based on the community.sap_install.sap_general_preconfigure roles.
+Create [sap_general_configure.yml](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/playbooks/sap_general_preconfigure.yml) to configure OS baseline for SAP software installation to implements SAP Notes: 2002167, 2772999, 3108302 (RHEL8), based on the community.sap_install.sap_general_preconfigure roles.
 
 Do a dry run first, to evaluate every task and reports what it would do without making any actual changes. This is how we validate a playbook before committing to real changes on a SAP server.
 
@@ -508,6 +508,3 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 
 ---
 
-<p align="center">
-  Built with ❤️ for SAP Basis Engineers who believe in Infrastructure as Code
-</p>
