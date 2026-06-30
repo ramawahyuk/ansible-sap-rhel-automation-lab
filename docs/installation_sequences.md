@@ -25,10 +25,6 @@ Step 4: sap_swpm                     ← ABAP stack installation
 ```
 
 
-This is the target end-to-end sequence for standing up Oracle 19c + SAP
-ABAP on `saperp`. Only step 1 has been attempted so far; see
-[troubleshooting.md](troubleshooting.md) for its current blocker.
-
 ## 1. `sap_general_preconfigure` (in progress)
 
 ```bash
