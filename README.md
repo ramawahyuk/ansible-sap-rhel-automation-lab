@@ -483,7 +483,7 @@ Step 4: sap_swpm                     ← ABAP stack installation
 
 ## Known Issue
 
-See docs/troubleshooting.md for the current Python interpreter / libselinux blocker on the SELinux boolean task, including diagnostic commands and candidate fixes.
+See docs/[troubleshooting.md](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/docs/troubleshooting.md) for the current Python interpreter / libselinux blocker on the SELinux boolean task, including diagnostic commands and candidate fixes.
 
 ---
 
