@@ -79,7 +79,7 @@ This project automates the full lifecycle of SAP software deployment using Ansib
 
 - RHEL 8.x with active subscription
 - Python 3.12
-- Ansible 2.21+ (`python3.12 -m pip install ansible`)
+- Ansible 2.16 (`python3.12 -m pip install ansible`)
 - SSH key-based access to SAP server (passwordless)
 - Internet access for collection installation
 
@@ -89,7 +89,7 @@ This project automates the full lifecycle of SAP software deployment using Ansib
 - All 5 SAP RHEL repositories enabled
 - `/oracle` filesystem mounted (dedicated volume recommended)
 - SAP installation media staged at `/oracle/software`
-- Python 3.12
+- Python 3.6
 
 ### Required RHEL Repositories
 
