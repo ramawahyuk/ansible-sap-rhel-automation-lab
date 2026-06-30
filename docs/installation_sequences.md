@@ -25,7 +25,7 @@ Step 4: sap_swpm                     ← ABAP stack installation
 ```
 
 
-## 1. `sap_general_preconfigure` (in progress)
+## 1. `sap_general_preconfigure` ✅
 
 ```bash
 # Do a dry run — check mode shows what WOULD change without changing anything
@@ -51,11 +51,46 @@ entries, tmpfs sizing (SAP Note 941735), locale, process resource limits.
 
 ---
 
-## 2. `sap_netweaver_preconfigure` (not yet implemented)
+## 2. `sap_netweaver_preconfigure`✅
 
 Additional ABAP/NetWeaver-specific OS tuning beyond the general
 preconfigure role: extra packages, process limits specific to NetWeaver
 work processes.
+
+```
+# Run the Dry run and ensure its works succesfully
+ansible-playbook playbooks/sap_netweaver_preconfigure.yml --check
+
+# Execute the real one after Dry-run succed
+ansible-playbook playbooks/sap_netweaver_preconfigure.yml 
+
+```
+
+<img width="725" height="871" alt="image" src="https://github.com/user-attachments/assets/06ceb2d6-e3d2-4b99-aa20-c41bc885ffd2" />
+
+<img width="724" height="856" alt="image" src="https://github.com/user-attachments/assets/d3474515-8140-435a-8af1-53681fe38b93" />
+
+Key things from the output above:
+
+1. SAP NetWeaver required packages were installed successfully.
+2. SAP Note 2526952 (RHEL for SAP packages) was applied.
+3. SAP Note 3119751 (SAP Kernel requirements) was applied.
+4. The tuned profile was switched from `virtual-guest` to `sap-netweaver`.
+
+<img width="673" height="33" alt="image" src="https://github.com/user-attachments/assets/e5c40b15-9f80-4dfb-ab87-16842abe2667" />
+
+5. Compatibility libraries for newer SAP kernels were configured (`compat-sap-c++-11.so`).
+
+<img width="635" height="58" alt="image" src="https://github.com/user-attachments/assets/c3bc71c9-15fb-452c-8e28-d97484523557" />
+
+
+6. /usr/sap/lib and the required `libstdc++.so.6` symlink were created.
+
+<img width="723" height="62" alt="image" src="https://github.com/user-attachments/assets/83039165-63ea-4c31-884a-574d4d66766a" />
+
+
+7. Final result: `failed=0`, `unreachable=0`.
+
 
 ## 3. Stage Oracle 19c media
 
