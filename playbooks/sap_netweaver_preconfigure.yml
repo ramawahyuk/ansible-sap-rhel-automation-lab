@@ -1,0 +1,8 @@
+---
+- name: SAP NetWeaver Preconfiguration
+  hosts: sap_app
+  become: true
+
+  roles:
+    - role: community.sap_install.sap_netweaver_preconfigure
+
