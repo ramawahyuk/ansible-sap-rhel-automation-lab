@@ -214,7 +214,7 @@ Check the connectivity between Ansible controller & Managed node
 cd ~/sap-ansible
 ansible -m ping sap_servers
 ```
-From inside ~/sap-ansible, run ping without specifying -i because [ansible.cfg](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/ansible.cfg) now defines the default inventory
+From inside ~/sap-ansible, run ping without specifying -i because [ansible.cfg](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/~/sap-ansible/ansible.cfg) now defines the default inventory
 
 Expected Output:
 
