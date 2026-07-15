@@ -238,7 +238,8 @@ Create a vault test playbook that confirms decryption works without printing the
 
 Expected Output:
 
-<img width="1430" height="1100" alt="HANA_vault" src="https://github.com/user-attachments/assets/58558cf9-859b-45af-beba-9dbe057210b9" />
+<img width="1450" height="1085" alt="vault" src="https://github.com/user-attachments/assets/8c131b6b-b9a2-4453-81cd-0cb57af9dd1a" />
+
 
 
 ---
