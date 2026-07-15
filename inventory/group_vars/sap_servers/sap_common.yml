@@ -23,7 +23,7 @@ sap_fqdn: "saperp.tes.com"
 # -- Software staging location -----------------------------------
 # SAP media staged on the SAP server itself (not controller)
 # Controller disk is too small (47GB) to hold installation media
-sap_software_base: "/oracle/software"
+sap_software_base: "/sapmedia/"
 
 # -- sap_general_preconfigure role variables --------------------
 # Do not enable repos - all 5 SAP repos already active on saperp
@@ -46,9 +46,7 @@ sap_general_preconfigure_modify_etc_hosts: true
 
 # -- Password References (values stored encrypted in vault.yml) --
 # Roles use these clean names - vault prefix stays internal
-oracle_sys_password: "{{ vault_oracle_sys_password }}"
-oracle_system_password: "{{ vault_oracle_system_password }}"
-oracle_dbsnmp_password: "{{ vault_oracle_dbsnmp_password }}"
+hana_sys_password: "{{ vault_hana_sys_password }}"
 sap_master_password: "{{ vault_sap_master_password }}"
 sap_swpm_db_schema_password: "{{ vault_sap_db_schema_password }}"
 sap_swpm_diagnostics_agent_password: "{{ vault_sap_diagnostics_agent_password }}"
