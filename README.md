@@ -57,8 +57,8 @@ This project automates the full lifecycle of SAP software deployment using Ansib
 
 **SAP System Details:**
 - SID: `ERP`
-- Database: Oracle Database 19c
-- SAP Product: SAP ECC6 EHP8
+- Database: HANA DB
+- SAP Product: SAP AS ABAP
 - OS: RHEL 8.10
 
 ---
