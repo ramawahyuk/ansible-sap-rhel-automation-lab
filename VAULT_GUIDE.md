@@ -144,7 +144,7 @@ ansible-vault rekey inventory/group_vars/sap_servers/vault.yml
 
 ## Create password reference to stored the value in encrypted
 
-add this into our [sap_common.yml](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/sap_common.yml) file
+add this into our [sap_common.yml](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/inventory/group_vars/sap_servers/sap_common.yml) file
 
 ```
 # ── Password References (values stored encrypted in vault.yml) ──
