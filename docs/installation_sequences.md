@@ -1,24 +1,22 @@
 # Installation sequence
 
 ```
-Step 1: sap_general_preconfigure     ← OS tuning for ALL SAP
+Step 1: sap_general_preconfigure      ← OS tuning for ALL SAP
         - kernel parameters (vm.max_map_count, etc.)
         - package installation
         - SELinux → permissive
         - tmpfs configuration
         - /etc/hosts verification
 
-Step 2: sap_netweaver_preconfigure   ← Additional ABAP tuning
+Step 2: sap_netweaver_preconfigure     ← Additional ABAP tuning
         - process limits (nproc, nofile)
         - ABAP-specific packages
 
-Step 3: sap_anydb_install_oracle     ← Oracle DB 19c install
-        - extract Oracle media
-        - run Oracle installer (silent)
-        - apply SAP Oracle patch
-        - create Oracle central inventory
-
-Step 4: sap_swpm                     ← ABAP stack installation
+Step 3: hana_install                   ← SAP HANA DB Installation
+        - extract HANA media
+        - run HANA installer (silent)
+     
+Step 4: swpm_install                   ← ABAP stack installation
         - run SWPM silently
         - create SAP system (ERP/SID)
         - configure Oracle schema (SAPSR3)
@@ -92,25 +90,32 @@ Key things from the output above:
 7. Final result: `failed=0`, `unreachable=0`.
 
 
-## 3. Stage Oracle 19c media
+## 3. Stage SAP HANA DB Installation
 
-Oracle installation media must be copied to `saperp:/oracle/software`
-(matches `sap_anydb_install_oracle_extract_path` in
-`inventory/group_vars/sap_db/oracle.yml`). This repo does not include the
-media itself — it's licensed software and must be sourced from SAP/Oracle
-directly.
+A. Pre-installation
 
-**Note:** `ansnode`'s root disk is only 47 GB — never stage SAP media on
-the controller. It must land directly on `saperp`.
+- ✅ Confirm allocated RAM meets HANA minimum. `hdblcm` enforces a hard check
+  (lab installs have failed at <1 GB; production minimum guidance is 24 GB+ per SAP Note 1637145 —
+  for a sandbox you may need `--ignore=check_min_mem`, but plan real RAM if possible)
+- ⚙️ `sap_preconfiguration` role already applied (kernel params, users, SELinux, swap)
+- ⚙️ `sap_netweaver_preconfiguration` role already applied
+- ✅ **NEW:** Run `community.sap_install.sap_hana_preconfigure` (from `requirements.yml` we added)
+  covers HANA-specific OS tuning (SAP Note 2235581, 2009879, 2578899) not covered by your
+  NetWeaver-only preconfig role
 
-## 4. `sap_anydb_install_oracle` (not yet implemented)
+```
+# Run 
+ansible-doc -t role community.sap_install.sap_hana_install
 
-Installs Oracle DB 19c using the `community.sap_install.sap_anydb_install_oracle`
-role, method `minimal`. Two mandatory variables with no role defaults are
-already set in `inventory/group_vars/sap_db/oracle.yml`:
+# Execute the real one after Dry-run succed
+ansible-playbook playbooks/sap_netweaver_preconfigure.yml 
 
-- `sap_anydb_install_oracle_system_password`
-- `sap_anydb_install_oracle_extract_path`
+```
+
+
+
+
+
 
 ## 5. `sap_swpm` (not yet implemented)
 
