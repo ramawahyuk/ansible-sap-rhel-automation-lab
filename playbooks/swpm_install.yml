@@ -1,41 +1,57 @@
 ---
-# ================================================================
-# Playbook: swpm_install.yml
-# Purpose : SAP ABAP NetWeaver installation via SWPM (silent)
-# Role    : community.sap_install.sap_swpm
-# Target  : saperp (192.168.1.17)
-# Run with: ansible-playbook playbooks/swpm_install.yml
-# Prerequisites:
-#   - sap_general_preconfigure.yml completed
-#   - sap_netweaver_preconfigure.yml completed (if applicable)
-#   - Oracle DB 19c installed and running
-#   - SAP SWPM media staged at {{ sap_software_base }}
-# ================================================================
+# swpm_install.yml
+# Drop into playbooks/ — run this AFTER hana_install.yml completes
+#
+# Run order for the pivoted lab:
+#   1. sap_preconfiguration.yml            (unchanged)
+#   2. sap_netweaver_preconfiguration.yml  (unchanged)
+#   3. hana_install.yml                    (DONE - S4D/00 running GREEN)
+#   4. swpm_install.yml                    (THIS - installs ASCS + PAS via SWPM)
 
-- name: SAP ABAP NetWeaver Installation via SWPM
-  hosts: sap_servers
+- name: Install SAP S/4HANA application layer via SWPM
+  hosts: saperp
   become: true
-  gather_facts: true
-
-  pre_tasks:
-    - name: Verify target and prerequisites
-      ansible.builtin.assert:
-        that:
-          - ansible_facts['hostname'] == "saperp"
-          - ansible_facts['distribution'] == "RedHat"
-          - ansible_facts['distribution_major_version'] == "8"
-        success_msg: "Target verified: {{ ansible_facts['fqdn'] }}"
-        fail_msg: "Unexpected target: {{ ansible_facts['fqdn'] }}. Aborting."
-
-    - name: Display installation summary
-      ansible.builtin.debug:
-        msg:
-          - "Target     : {{ ansible_facts['fqdn'] }}"
-          - "SAP SID    : {{ sap_sid }}"
-          - "Instance   : {{ sap_instance_number }}"
-          - "DB         : Oracle {{ oracle_version }}"
-          - "Media Path : {{ sap_software_base }}"
-
   roles:
-    - role: sap-netweaver-preconfigure
+    - role: community.sap_install.sap_install_media_detect
+      vars:
+        sap_install_media_detect_source_directory: /sapmedia
+        # NOTE: sap_install_media_detect_db intentionally NOT set here.
+        # HANA is already installed separately via hdblcm (SID S4D) --
+        # this SWPM step only connects to that existing instance, it does
+        # not install a new DB. Setting sap_install_media_detect_db:
+        # 'saphana' incorrectly requires a raw IMDB_SERVER*.SAR file we
+        # don't have (and don't need) in this scenario.
+        sap_install_media_detect_db_client: 'saphana'
+        # SWPM is pre-extracted at /sapmedia/SWPM already (contains sapinst,
+        # product.catalog directly) -- not a raw SWPM*.SAR file, so
+        # auto-detection won't find it. Set false here and point
+        # sap_swpm_path directly at it in swpm.yml instead.
+        sap_install_media_detect_swpm: false
+        sap_install_media_detect_hostagent: true
+        sap_install_media_detect_igs: true
+        sap_install_media_detect_kernel: true
+        sap_install_media_detect_kernel_db: 'saphana'
+        sap_install_media_detect_webdisp: false
+        # NOTE: sap_install_media_detect_export intentionally NOT set here.
+        # Our S4HANA export (EXPORT_1..EXPORT_11 under DATA_UNITS) is
+        # classic SWPM1-style CD/media export format, not the SAR-bundle
+        # format this flag's 'saps4hana' detection expects. Handled instead
+        # via sap_swpm_cd_export_path + sap_swpm_software_use_media in
+        # swpm.yml.
+      tags: [swpm_media_detect, always]
+
     - role: community.sap_install.sap_swpm
+      tags: [swpm_install]
+
+  post_tasks:
+    - name: Verify S/4HANA OneHost instance is running
+      ansible.builtin.command: >
+        /usr/sap/hostctrl/exe/sapcontrol -nr {{ sap_swpm_pas_instance_nr }}
+        -function GetProcessList
+      register: s4_status
+      changed_when: false
+      failed_when: "'GREEN' not in s4_status.stdout"
+
+    - name: Show S/4HANA instance status
+      ansible.builtin.debug:
+        var: s4_status.stdout_lines
