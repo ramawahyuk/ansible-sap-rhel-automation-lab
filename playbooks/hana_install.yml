@@ -1,0 +1,31 @@
+---
+# hana_install.yml
+# Drop this in playbooks/ directory next to
+# sap_preconfiguration.yml and sap_netweaver_preconfiguration.yml
+#
+# Run order for the pivoted lab:
+#   1. sap_preconfiguration.yml            (unchanged)
+#   2. sap_netweaver_preconfiguration.yml  (unchanged)
+#   3. hana_install.yml                    (NEW - replaces sap_anydb_install_oracle)
+#   4. sap_swpm.yml / your S4HANA install playbook (point DB vars at HANA)
+
+- name: Install SAP HANA 2.0 SPS03 database
+  hosts: saperp
+  become: true
+  roles:
+    - role: community.sap_install.sap_hana_preconfigure
+      tags: [hana_preconfigure]
+    - role: sap_hana_install     # thin wrapper role, see roles/sap_hana_install/
+
+  post_tasks:
+    - name: Verify HANA instance is running
+      ansible.builtin.command: >
+        /usr/sap/hostctrl/exe/sapcontrol -nr {{ sap_hana_instance_nr }}
+        -function GetProcessList
+      register: hana_status
+      changed_when: false
+      failed_when: "'GREEN' not in hana_status.stdout"
+
+    - name: Show HANA status
+      ansible.builtin.debug:
+        var: hana_status.stdout_lines
