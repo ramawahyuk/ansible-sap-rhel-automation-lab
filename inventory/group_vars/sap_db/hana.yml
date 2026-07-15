@@ -1,0 +1,44 @@
+---
+# --- Identity ---
+sap_hana_sid: "S4D"
+sap_hana_instance_nr: "00"
+sap_hana_host: "saperp"
+
+# --- Media locations on the control/target node ---
+# Point these at the folders from your screenshot (verify they're the
+# generic-Linux SAPCAR builds, not SLES-tagged, before running)
+sap_hana_software_path: "/sapmedia/HANA"
+sap_hana_client_software_path: "/sapmedia/sap_hana_client_extracted/SAP_HANA_CLIENT"
+
+# --- Filesystem layout (replaces your /oracle/<SID> mounts) ---
+sap_hana_data_path: "/hana/data/S4D"
+sap_hana_log_path: "/hana/log/S4D"
+sap_hana_shared_path: "/hana/shared/S4D"
+sap_hana_usrsap_path: "/usr/sap/S4D"
+
+
+# --- community.sap_install.sap_hana_preconfigure override ---
+# Role default is [/hana, /lss/shared] — /lss/shared is a generic
+# placeholder in the collection and doesn't exist on this host, causing
+# restorecon to fail. Override with our real mounted paths only.
+sap_hana_preconfigure_hana_directories:
+  - /hana
+  - /hana/data
+  - /hana/log
+  - /hana/shared
+  - /usr/sap
+
+# --- Sizing (adjust to lab VM specs) ---
+sap_hana_data_size_gb: 50
+sap_hana_log_size_gb: 25
+sap_hana_shared_size_gb: 50
+
+# --- Secrets: keep these in vault.yml as you already do for Oracle ---
+# ansible-vault edit group_vars/vault.yml
+# vault_sap_hana_sys_password: "..."
+# vault_sap_hana_ssfs_master_key: "..."   # optional, only if not using default
+sap_hana_sys_password: "{{ vault_sap_hana_sys_password }}"
+
+# --- SWPM linkage (used later by your existing S/4HANA install step) ---
+sap_hana_db_host: "{{ sap_hana_host }}"
+sap_hana_db_instance_nr: "{{ sap_hana_instance_nr }}"
