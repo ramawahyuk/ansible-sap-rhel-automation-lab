@@ -1,0 +1,32 @@
+---
+# hana_preconfigure.yml
+# Drop into playbooks/ — run this BEFORE hana_install.yml
+#
+# Covers HANA-specific OS tuning not included in your existing
+# sap_netweaver_preconfiguration role: kernel params, ulimits, THP,
+# numactl, sapconf/saptune profile, filesystem mount options for
+# /hana/data and /hana/log (relevant for RHEL: tuned-adm profile
+# sap-hana, /etc/security/limits.d, vm.max_map_count, etc.)
+
+- name: SAP HANA OS preconfiguration
+  hosts: saperp
+  become: true
+  roles:
+    - role: community.sap_install.sap_hana_preconfigure
+      tags: [hana_preconfigure]
+
+  post_tasks:
+    - name: Confirm tuned-adm profile active
+      ansible.builtin.command: tuned-adm active
+      register: tuned_check
+      changed_when: false
+
+    - name: Show active tuned profile
+      ansible.builtin.debug:
+        var: tuned_check.stdout
+
+    - name: Verify vm.max_map_count is set correctly for HANA
+      ansible.builtin.command: sysctl vm.max_map_count
+      register: max_map_check
+      changed_when: false
+      failed_when: "'2147483647' not in max_map_check.stdout"
