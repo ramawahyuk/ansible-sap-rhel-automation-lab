@@ -6,7 +6,7 @@ This document covers everything you need to work with the encrypted vault files 
 
 ## Why Vault?
 
-Storing SAP and Oracle passwords in plain text is a common mistake that exposes credentials in:
+Storing SAP and HANA passwords in plain text is a common mistake that exposes credentials in:
 - Git history (permanent, even after deletion)
 - Shell history (`ansible-playbook site.yml -e "password=Welcome1"`)
 - Process lists (`ps aux` shows command-line arguments)
@@ -30,12 +30,10 @@ ansible-vault encrypt inventory/group_vars/sap_servers/vault.yml
 
 | Variable | Purpose | Used By |
 |----------|---------|---------|
-| `vault_oracle_sys_password` | Oracle SYS DBA superuser | `sap_anydb_install_oracle` |
-| `vault_oracle_system_password` | Oracle SYSTEM DBA | `sap_anydb_install_oracle` |
-| `vault_oracle_dbsnmp_password` | Oracle monitoring account | `sap_anydb_install_oracle` |
-| `vault_sap_master_password` | SAP master (SAP*, DDIC) | `sap_swpm` |
-| `vault_sap_db_schema_password` | SAP DB schema (SAPSR3) | `sap_swpm` |
-| `vault_sap_diagnostics_agent_password` | SAP diagnostics agent | `sap_swpm` |
+| `vault_hana_sys_password` | HANA SYS DBA superuser | `hana` |
+| `vault_sap_master_password` | SAP master (SAP*, DDIC) | `swpm_install` |
+| `vault_sap_db_schema_password` | SAP DB schema (SAPSR3) | `swpm_install` |
+| `vault_sap_diagnostics_agent_password` | SAP diagnostics agent | `swpm_install` |
 
 > **Production Note:** Replace `.vault_pass` file with HashiCorp Vault, CyberArk, or AAP Credentials Manager.
 
@@ -43,24 +41,7 @@ ansible-vault encrypt inventory/group_vars/sap_servers/vault.yml
 
 ## How It Works
 
-<img width="1536" height="1024" alt="How Ansible vault works" src="https://github.com/user-attachments/assets/2eae2833-2548-4777-943b-26b1c4ce9380" />
-
----
-
-## Variable Naming Convention
-
-This project uses a two-layer naming pattern:
-
-| Layer | File | Variable Name | Purpose |
-|-------|------|---------------|---------|
-| Vault | `vault.yml` | `vault_oracle_sys_password` | Encrypted storage |
-| Reference | `sap_common.yml` | `oracle_sys_password` | What roles actually use |
-
-Roles and playbooks only reference the clean names (without `vault_` prefix). The mapping in `sap_common.yml` connects them:
-
-```yaml
-oracle_sys_password: "{{ vault_oracle_sys_password }}"
-```
+<img width="1535" height="1024" alt="vault1" src="https://github.com/user-attachments/assets/0965ea65-3522-4893-a3f2-09373c7642dd" />
 
 ---
 
@@ -167,9 +148,7 @@ add this into our [sap_common.yml](https://github.com/ramawahyuk/ansible-sap-rhe
 
 ```
 # ── Password References (values stored encrypted in vault.yml) ──
-oracle_sys_password: "{{ vault_oracle_sys_password }}"
-oracle_system_password: "{{ vault_oracle_system_password }}"
-oracle_dbsnmp_password: "{{ vault_oracle_dbsnmp_password }}"
+hana_sys_password: "{{ vault_hana_sys_password }}"
 sap_master_password: "{{ vault_sap_master_password }}"
 sap_swpm_db_schema_password: "{{ vault_sap_db_schema_password }}"
 sap_swpm_diagnostics_agent_password: "{{ vault_sap_diagnostics_agent_password }}"
@@ -188,7 +167,8 @@ ansible-playbook playbooks/vault_test.yml
 Expected Results:
 
 
-<img width="722" height="662" alt="image" src="https://github.com/user-attachments/assets/02393d09-2cec-4862-92c5-335b127a5f06" />
+<img width="1450" height="1085" alt="vault" src="https://github.com/user-attachments/assets/335d5002-1cd9-4f69-94f7-c04b07e35fe1" />
+
 
 
 The character count confirms the vault decrypted to the correct password length without ever displaying the actual values. This is the correct way to verify vault configuration in a runbook or audit.
