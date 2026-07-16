@@ -1,9 +1,8 @@
 ---
 # ================================================================
 # Ansible Collection Requirements
-# Install with: ansible-galaxy collection install -r requirements.yml -p collections/ --force-with-deps
+# Install with: ansible-galaxy collection install -r requirements.yml
 # ================================================================
-
 collections:
   - name: community.sap_install
     version: ">=1.9.0"
@@ -11,3 +10,8 @@ collections:
   # Required by sap_general_preconfigure for kernel/SELinux/timesync tasks
   - name: fedora.linux_system_roles
     version: ">=1.0.0"
+
+  - name: ansible.utils
+    version: ">=2.10.0"
+  # dependency of sap_maintain_etc_hosts used inside the collection
+
