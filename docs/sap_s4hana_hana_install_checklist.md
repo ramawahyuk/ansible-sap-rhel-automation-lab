@@ -7,8 +7,7 @@ Legend: 🔲 pending · ⚙️ automated by Ansible roles
 ## 1. Pre-Installation — Host & OS (RHEL 8.10)
 
 - 🔲 Confirm allocated RAM meets HANA minimum. `hdblcm` enforces a hard check
-  (lab installs have failed at <1 GB; production minimum guidance is 24 GB+ per SAP Note 1637145 —
-  for a sandbox we may need `--ignore=check_min_mem`, but plan real RAM if possible)
+  (lab installs have failed at <1 GB; production minimum guidance is 24 GB+ per SAP Note 1637145 for a sandbox we may need `--ignore=check_min_mem`, but plan real RAM if possible)
 - ⚙️ `sap_preconfiguration` role already applied (kernel params, users, SELinux, swap)
 - ⚙️ `sap_netweaver_preconfiguration` role already applied
 - 🔲 **NEW:** Run `community.sap_install.sap_hana_preconfigure` (from `requirements.yml` we added) covers HANA-specific OS tuning (SAP Note 2235581, 2009879, 2578899) not covered by previous NetWeaver-only preconfig role
@@ -19,8 +18,8 @@ Legend: 🔲 pending · ⚙️ automated by Ansible roles
 
 mounts filesystem:
 
-- 🔲 `/hana/data/<SID>` — sized per `sap_hana_data_size_gb`
-- 🔲 `/hana/log/<SID>` — sized per `sap_hana_log_size_gb`
+- 🔲 `/hana/data/<SID>` -> sized per `sap_hana_data_size_gb`
+- 🔲 `/hana/log/<SID>` -> sized per `sap_hana_log_size_gb`
 - 🔲 `/hana/shared/<SID>`
 - 🔲 `/usr/sap/<SID>`
 
