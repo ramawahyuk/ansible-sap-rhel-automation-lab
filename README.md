@@ -448,8 +448,6 @@ See docs/[troubleshooting.md](https://github.com/ramawahyuk/ansible-sap-rhel-aut
   ```yaml
   until: "(__sap_swpm_register_pids_sapinst.stdout | default('')) | length == 0"
   ```
-- **Host resource sizing (VMware Workstation lab specifically).** Running `saperp` at 8 vCPUs on an 8-core physical host left zero headroom for the hypervisor/host OS, causing kernel soft lockups (`swapper`/`vmtoolsd`/`sshd` stuck for 60–280s) during CPU-intensive phases (HANA startup, ABAP import). Reduced to `saperp: 1 socket × 4–6 cores`, `ansnode: 1 socket × 1 core`, leaving the host at least 1–2 free physical cores. Also reduce `sap_swpm_parallel_jobs_nr` (e.g. `4` → `2`) to lower peak concurrent load during the import phase.
-
 ---
 
 ## Acknowledgements
