@@ -133,8 +133,9 @@ subscription-manager repos \
 │       │   ├── sap_common.yml           ← SAP SID, IP, preconfigure vars, pwd refs
 │       │   └── vault.yml                ← AES-256 encrypted credentials
 │       ├── sap_db/
+│       │   ├── hana.yml                 ← HANA DB configuration (SID, filesystem, directories, media paths)
 │       │   └── swpm.yml                 ← SWPM inifile vars (SID, HANA connection, media paths)
-│       └── sap_app/                     ← (future: dedicated app server)
+│       └── hosts.yml                    ← SAP Ansible Inventory
 │
 ├── playbooks/
 │   ├── os_info.yml                      ← Read-only pre-install system report
@@ -142,7 +143,8 @@ subscription-manager repos \
 │   ├── sap_general_preconfigure.yml     ← Step 1: OS baseline for SAP
 │   ├── sap_netweaver_preconfigure.yml   ← Step 2: ABAP-specific tuning
 │   ├── sap_hana_preconfigure.yml        ← Step 3: SAP HANA specific OS tuning
-│   └── swpm_install.yml                 ← Step 4: SAP S/4HANA AS ABAP via SWPM
+│   ├── hana_install.yml                 ← Step 4: SAP HANA DB installation
+│   └── swpm_install.yml                 ← Step 5: SAP S/4HANA AS ABAP via SWPM
 │
 ├── roles/                               ← Custom roles (not collection roles)
 │
