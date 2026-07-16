@@ -1,0 +1,71 @@
+---
+# group_vars/sap_db/swpm.yml
+#
+# S/4HANA application-layer install via SWPM, using the HANA DB tha already installed 
+#
+# Rewritten 2026-07-02 against the ACTUAL role defaults/main.yml for
+# community.sap_install.sap_swpm (verified on ansnode), not assumed names.
+
+sap_swpm_sid: "NW1"
+sap_swpm_fqdn: "tes.com"
+sap_swpm_ascs_instance_nr: "01"
+sap_swpm_pas_instance_nr: "02"
+
+sap_swpm_product_catalog_id: "NW_ABAP_OneHost:S4HANA1709.CORE.HDB.ABAP"
+
+
+sap_swpm_path: "/sapmedia/SWPM_SAR"
+sap_swpm_file_name: "SWPM10SP23_0-20009701.SAR"   
+sap_swpm_cd_rdbms_path: "/sapmedia/sap_hana_client_extracted/SAP_HANA_CLIENT"
+
+# --- DB connection: points at our already-installed HANA instance ---
+sap_swpm_db_host: "{{ sap_hana_host }}"               
+sap_swpm_db_sid: "{{ sap_hana_sid }}"                 
+sap_swpm_db_instance_nr: "{{ sap_hana_instance_nr }}" 
+sap_swpm_db_system_password: "{{ vault_sap_hana_sys_password }}"
+
+sap_swpm_db_systemdb_password: "{{ vault_sap_hana_sys_password }}"
+
+# --- ABAP DB schema (role default is already SAPHANADB, kept explicit) ---
+sap_swpm_db_schema_abap: "SAPHANADB"
+sap_swpm_db_schema_abap_password: "{{ vault_sap_db_schema_password }}"
+
+sap_swpm_software_use_media: true
+sap_swpm_cd_export_path: "/sapmedia/EXPORT/DATA_UNITS"   # parent of EXPORT_1..EXPORT_11 -- adjust to actual staged path
+
+sap_swpm_inifile_sections_list:
+  - swpm_installation_media
+  - swpm_installation_media_swpm2_hana
+  - swpm_installation_media_swpm1_exportfiles
+  - credentials
+  - credentials_hana
+  - db_config_hana
+  - db_connection_nw_hana
+  - nw_config_other
+  - nw_config_central_services_abap
+  - nw_config_primary_application_server_instance
+  - nw_config_ports
+  - nw_config_host_agent
+  - nw_config_livecache
+  - sap_os_linux_user
+
+sap_swpm_inifile_parameters_dict:
+  NW_liveCache.useLiveCache: "false" #adjust to your actual environment
+  SAPINST.CD.PACKAGE.RDBMS-HDB-CLIENT: "/sapmedia/sap_hana_client_extracted/SAP_HANA_CLIENT"  #adjust to your actual environment
+  hdb.create.dbacockpit.user: "false"
+
+# --- Passwords ---
+sap_swpm_master_password: "{{ vault_sap_master_password }}"
+sap_swpm_ddic_000_password: "{{ vault_sap_master_password }}"
+sap_swpm_diagnostics_agent_password: "{{ vault_sap_diagnostics_agent_password }}"
+sap_swpm_sapadm_password: "{{ vault_sap_master_password }}"
+sap_swpm_sap_sidadm_password: "{{ vault_sap_master_password }}"
+
+sap_swpm_sapsys_gid: "971"
+sap_swpm_sapadm_uid: "1000"
+sap_swpm_install_saphostagent: false  #adjust to your actual environment
+sap_swpm_set_sidadm_noexpire: true
+sap_swpm_configure_firewall: false
+sap_swpm_update_etchosts: false
+sap_swpm_display_unattended_output: false
+sap_swpm_parallel_jobs_nr: "2"   # adjust to your VM's actual core count (role default is 23)
