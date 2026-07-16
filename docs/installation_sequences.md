@@ -119,8 +119,7 @@ ansible-playbook playbooks/sap_netweaver_preconfigure.yml
 
 ## 5. `sap_swpm` (not yet implemented)
 
-Installs the SAP ABAP stack via SWPM, using the Oracle instance from step
-4 as the database backend.
+Installs the SAP ABAP stack via SWPM.
 
 ---
 
