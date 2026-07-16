@@ -11,21 +11,15 @@
 #            then encrypt before committing.
 # ================================================================
 
-# -- Oracle DB Passwords ----------------------------------------
-# Oracle SYS - primary DBA superuser account
-vault_oracle_sys_password: "CHANGE_ME"
+# ── HANA  DB Passwords ──────────────────────────────────────
 
-# Oracle SYSTEM - secondary DBA account
-vault_oracle_system_password: "CHANGE_ME"
+vault_sap_hana_sys_password: "CHANGE_ME"
 
-# Oracle DBSNMP - monitoring account
-vault_oracle_dbsnmp_password: "CHANGE_ME"
-
-# -- SAP Master Password ----------------------------------------
+# ── SAP Master Password ──────────────────────────────────────
 # Sets SAP*, DDIC, and other default user passwords during SWPM
 vault_sap_master_password: "CHANGE_ME"
 
-# -- SAP Schema Passwords ----------------------------------------
+# ── SAP Schema Passwords ─────────────────────────────────────
 # SAP database schema user (SAPSR3, SAPHANADB, etc.)
 vault_sap_db_schema_password: "CHANGE_ME"
 
