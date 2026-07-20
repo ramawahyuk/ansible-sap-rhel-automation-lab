@@ -83,4 +83,12 @@ su - nw1adm -c "sapcontrol -nr 02 -function GetInstanceProperties" | grep -i "SA
 
 <img width="975" height="83" alt="image" src="https://github.com/user-attachments/assets/ba52ce1e-8d9e-4524-9d4f-4ded63cf5870" />
 
+## SAP GUI Connection Parameters
 
+
+<img width="975" height="1005" alt="image" src="https://github.com/user-attachments/assets/57591e9a-6609-4a10-b43f-a0b057cafae4" />
+
+## SAP GUI 
+
+
+<img width="975" height="520" alt="image" src="https://github.com/user-attachments/assets/2ef397c6-3270-40cb-9490-810e90632211" />
