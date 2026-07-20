@@ -1,7 +1,7 @@
 # 🚀 ansible-sap-rhel-automation
 
 > **Ansible automation framework for SAP pre-installation preparation and environment standardization on Red Hat Enterprise Linux (RHEL 8).**  
-> This repository documents my hands-on lab work building a repeatable, automated SAP deployment pipeline replacing manual OS preparation steps with idempotent Ansible playbooks validated against a two-node lab environment.
+> This repository documents my hands-on lab work building a repeatable, automated SAP deployment pipeline replacing manual OS preparation steps with idempotent Ansible playbooks following the `community.sap_install` collection conventions used in enterprise SAP projects. Credentials are protected with AES-256 Ansible Vault encryption. The lab originally targeted ECC6 on Oracle 19c and has since moved to the SAP HANA / S/4HANA stack and validated against a two-node lab environment.
 > 
 [![Ansible](https://img.shields.io/badge/Ansible-2.21.1-red?logo=ansible)](https://www.ansible.com/)
 [![RHEL](https://img.shields.io/badge/RHEL-8.x-red?logo=redhat)](https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux)
@@ -51,7 +51,6 @@ This project automates the full lifecycle of SAP software deployment using Ansib
 <img width="1535" height="1024" alt="SAP_S4HANA DIAG" src="https://github.com/user-attachments/assets/c108a847-3574-41c0-a08a-a7d399b6f528" />
 
 
----
 
 | Node | Hostname | IP Address | Role |
 |------|----------|------------|------|
@@ -75,10 +74,10 @@ This project automates the full lifecycle of SAP software deployment using Ansib
 |-------|--------|-------|
 | OS Preparation | ✅ Tested | Validated on RHEL 8.10 |
 | SAP Prerequisites | ✅ Tested | Validated against SAP S/4HANA 1709 requirements |
-| HANA Client / Media Detection | ✅ Tested | HANA client media location must be pinned explicitly in `inifile.params` — see [Known Issues](#known-issue) |
-| HANA DB Installation | ✅ Tested | HANA DB installation on `saperp`  |
+| HANA Prerequisites | ✅ Tested | sap_hana_preconfigure per SAP Note 2777782 |
+| HANA DB Installation | ✅ Tested | Silent HANA DB installation on `saperp` via `hana_install`  |
 | Environment Validation | ✅ Tested | Pre-SWPM checklist automated |
-| SWPM Automation | 🔄 In Progress | ABAP import phase (`NW_CreateDBandLoad`) completes in stages; role has no native resume/reuseInifile mode, see Known Issues |
+| SWPM (S/4HANA) Install | ✅ Tested | Silent SWPM against the HANA DB |
 | Post-Install Automation | 📋 Planned | Future phase |
 
 ---
@@ -94,12 +93,7 @@ This project automates the full lifecycle of SAP software deployment using Ansib
 
 ### SAP Server (`saperp`)
 
-- RHEL 8.x with active subscription
-- All 5 SAP RHEL repositories enabled
-- A pre-existing, running SAP HANA instance reachable from `saperp` (this repo does not install HANA itself)
-- SAP installation media (SWPM SAR, NetWeaver kernel, HANA client, export/DATA_UNITS) staged under `/sapmedia`
-- HANA client media **must be extracted** (not left as a raw `.SAR`) with `LABEL.ASC`/`LABELIDX.ASC` present at the top level — SWPM cannot resolve a `.SAR` archive on its own in unattended mode
-- Python 3.6
+SAP server (`saperp`): RHEL 8.x with active subscription · HANA filesystems mounted (`/hana/data`, `/hana/log`, `/hana/shared` on dedicated volumes recommended) · HANA and SWPM media staged at `/hana/software` · all SAP RHEL repositories enabled:
 
 ### Required RHEL Repositories
 
@@ -143,7 +137,7 @@ subscription-manager repos \
 │   ├── sap_general_preconfigure.yml     ← Step 1: OS baseline for SAP
 │   ├── sap_netweaver_preconfigure.yml   ← Step 2: ABAP-specific tuning
 │   ├── sap_hana_preconfigure.yml        ← Step 3: SAP HANA specific OS tuning
-│   ├── hana_install.yml                 ← Step 4: SAP HANA DB installation
+│   ├── hana_install.yml                 ← Step 4: SAP HANA DB installation via hdbclm
 │   └── swpm_install.yml                 ← Step 5: SAP S/4HANA AS ABAP via SWPM
 │
 ├── roles/                               ← Custom roles (not collection roles)
