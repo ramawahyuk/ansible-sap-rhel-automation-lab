@@ -3,7 +3,7 @@
 > **Ansible automation framework for SAP pre-installation preparation and environment standardization on Red Hat Enterprise Linux (RHEL 8).**  
 > This repository documents my hands-on lab work building a repeatable, automated SAP deployment pipeline replacing manual OS preparation steps with idempotent Ansible playbooks following the `community.sap_install` collection conventions used in enterprise SAP projects. Credentials are protected with AES-256 Ansible Vault encryption. The lab originally targeted ECC6 on Oracle 19c and has since moved to the SAP HANA / S/4HANA stack and validated against a two-node lab environment.
 > 
-[![Ansible](https://img.shields.io/badge/Ansible-2.21.1-red?logo=ansible)](https://www.ansible.com/)
+[![Ansible](https://img.shields.io/badge/Ansible-2.16-red?logo=ansible)](https://www.ansible.com/)
 [![RHEL](https://img.shields.io/badge/RHEL-8.x-red?logo=redhat)](https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux)
 [![SAP](https://img.shields.io/badge/SAP-S%2F4HANA%201709%20%7C%20HANA%20DB-blue?logo=sap)](https://www.sap.com/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
