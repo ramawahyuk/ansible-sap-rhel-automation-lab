@@ -179,9 +179,6 @@ ssh root@192.168.1.17   # verify passwordless access
 ```
 Test ssh access to the sap server, it should not require any password
 
-<img width="688" height="113" alt="image" src="https://github.com/user-attachments/assets/f2acdec9-9fb4-4dae-b69b-cc1553170c84" />
-
-
 Assume that the [directory](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/directory_structure.md) structure already made 
 
 ### 4.Install Collections
@@ -216,13 +213,8 @@ ansible -m ping sap_servers
 ```
 From inside ~/sap-ansible, run ping without specifying -i because [ansible.cfg](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/~/sap-ansible/ansible.cfg) now defines the default inventory
 
-Expected Output:
 
-<img width="461" height="93" alt="image" src="https://github.com/user-attachments/assets/083f3197-e884-48e0-b0d9-bcad122cb1a6" />
-
----
-
-Verify Vault Decryption Works in a Playbook 
+### Verify Vault Decryption Works in a Playbook 
 
 ```
 # Run vault verification
@@ -232,125 +224,101 @@ ansible-playbook playbooks/vault_test.yml
 
 Create a vault test playbook that confirms decryption works without printing the actual passwords, named as [vault_test.yml](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/playbooks/vault_test.yml):
 
-Expected Output:
+### Gather SAP System Information
 
-<img width="1450" height="1085" alt="vault" src="https://github.com/user-attachments/assets/8c131b6b-b9a2-4453-81cd-0cb57af9dd1a" />
-
-
-
----
-
-Gather SAP System Information
+Run [os_info.yml](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/playbooks/os_info.yml) to gather and display SAP-relevant system information from saperp before any installation begins, read-only and makes zero changes to the target system.
 
 ```
 # Run pre-install system report (read-only)
 ansible-playbook playbooks/os_info.yml
 
 ```
-Run [os_info.yml](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/playbooks/os_info.yml) to gather and display SAP-relevant system information from saperp before any installation begins, read-only and makes zero changes to the target system.
-
-Expected Output (partially):
-<img width="1026" height="600" alt="image" src="https://github.com/user-attachments/assets/e34bcf61-459d-47ec-bd82-558fd79cf1a1" />
 
 
-based on that we can see confirmed functional results such as:
-
-```
-Hostname    : saperp          ✅
-FQDN        : saperp.tes.com  ✅
-SAP SID     : NW1             ✅
-SAP IP      : 192.168.1.17    ✅   (confirm against active NIC — see network note above)
-
-OS          : RedHat 8.10     ✅
-Kernel      : 4.18.0-553      ✅
-CPUs        : 6 vCPU          ✅   (reduced from 8 — see Known Issues, host CPU oversubscription)
-RAM         : 31.1 GB         ✅
-
-/           : 59.9GB  | 22GB free   | ~63% used  ✅
-/sapmnt     : 139.9GB | 138.9GB free | 0.7% used   ✅
-/hana/data  : 100GB   | ~80GB free  | ~21% used   ✅
-/hana/log   : 50GB    | ~42GB free  | ~18% used   ✅
-/hana/shared: 100GB   | ~94GB free  | ~7% used    ✅
-/boot       : 50.0GB  | 49.3GB free  | 1.3% used   ✅
-/usr/sap    : 149.9GB | 148.7GB free | 0.8% used   ✅
-/sapmedia   : (staging area for SWPM SAR, HANA client, DATA_UNITS)
-/home       : skipped  ← Correctly excluded by 'when' filter ✅
-
-Python      : 3.12.12         ✅
-HANA DB     : S4D, instance 00 ✅
-
-SAP Repos   : sap-netweaver-rpms ✅
-              sap-solutions-rpms ✅
-
-OS Check    : RedHat 8.10 SUPPORTED ✅
-
-```
-
-
-
----
-
-## Configuration
-
-### `ansible.cfg` Key Settings
-
-| Setting | Value | Purpose |
-|---------|-------|---------|
-| `inventory` | `inventory/hosts.yml` | Default inventory (no `-i` needed) |
-| `remote_user` | `root` | SSH user for all managed nodes |
-| `host_key_checking` | `False` | Lab convenience (set `True` in production) |
-| `forks` | `5` | Parallel host execution (increase for prod) |
-| `vault_password_file` | `/root/sap-ansible/.vault_pass` | Auto vault decryption |
-| `pipelining` | `True` | SSH performance — critical for SAP installs |
-| `fact_caching` | `jsonfile` | Cache facts in `/tmp/ansible_facts_cache` |
-| `inject_facts_as_vars` | `True` | Compatibility with `community.sap_install` roles |
+`ansible.cfg` defines the default inventory and vault password file, so no `-i` or `--vault-password-file` flags are needed when running from the repo root. Expected outputs and screenshots: [docs/EXPECTED_OUTPUT.md](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/docs/EXPECTED_OUTPUT.md).
 
 ### Network Configuration (Dual NIC Setup)
 
 This lab uses two network adapters on both the controller and SAP server to separate SAP traffic from internet access (needed for collection installation).
 
-## Adapter Roles
-
-| Adapter | Type | Purpose | IP Range |
-|---------|------|---------|----------|
-| `ens160` | Bridge (Host-Only) | SAP internal network — Ansible SSH, SAP ports | 192.168.1.x |
-| `ens224` | NAT | Internet access — package/collection downloads | DHCP (NAT) |
-
----
 
 ## Playbooks
 
+ Playbook | Purpose |
+|---|---|
+| `os_info.yml` | Read-only report: hostname/FQDN, OS, CPU/RAM/swap, SAP filesystems, Python, SAP repos, HANA base directory. Makes zero changes. |
+| `vault_test.yml` | Confirms every vault variable is defined and non-empty. Prints character counts only, never values. |
+| `sap_general_preconfigure.yml` | Step 1 — OS baseline per SAP Notes 2002167, 2772999, 3108302 (kernel params, packages, SELinux, tmpfs, `/etc/hosts`). |
+| `sap_netweaver_preconfigure.yml` | Step 2a — process limits and ABAP-specific packages. |
+| `hana_preconfigure.yml` | Step 2b — HANA-specific OS tuning on the DB host (SAP Note 2777782 for RHEL 8). |
+| `hana_install.yml` | Step 3 — silent SAP HANA installation via `hdblcm` (SID `HDB`, instance 00). |
+| `swpm_install.yml` | Step 4 — silent SWPM run installing S/4HANA against the HANA DB (SID `ERP`, SAPHANADB schema). |
+
+Always dry-run a change playbook first:
+
+```bash
+ansible-playbook playbooks/sap_general_preconfigure.yml --check
+ansible-playbook playbooks/sap_general_preconfigure.yml
+```
+
+Or run the whole sequence via tags:
+
+```bash
+ansible-playbook site.yml --tags preflight
+ansible-playbook site.yml --tags step1,step2
+```
+
+
 Refer to [this](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/tree/main/playbooks) directory for the Ansible playbooks.
 
----
+
+## Ansible Vault
+
+All credentials use file-level AES-256 encryption:
+
+```
+vault.yml        → encrypted (safe to commit)
+.vault_pass      → plain-text password file (chmod 600, NEVER committed)
+sap_common.yml   → references secrets via {{ vault_* }} variables
+```
+
+| Variable | Purpose | Used by |
+|---|---|---|
+| `vault_hana_master_password` | HANA SYSTEM / `<sid>adm` master | `sap_hana_install`, `sap_swpm` |
+| `vault_sap_master_password` | SAP master (SAP*, DDIC) | `sap_swpm` |
+| `vault_sap_db_schema_password` | ABAP schema (SAPHANADB) | `sap_swpm` |
+| `vault_sap_diagnostics_agent_password` | Diagnostics agent | `sap_swpm` |
+
+Common operations: `ansible-vault view|edit|rekey inventory/group_vars/sap_servers/vault.yml`
+
+> **Production note:** replace the `.vault_pass` file with HashiCorp Vault, CyberArk, or AAP Credentials Manager. See [VAULT_GUIDE.md](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/VAULT_GUIDE.md) and [SECURITY.md](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/SECURITY.md).
+
 
 ## Installation Sequence
 
 ```
-Step 1: sap_general_preconfigure     ← OS tuning for ALL SAP
+Step 1: sap_general_preconfigure                     ← OS tuning for ALL SAP
         - kernel parameters (vm.max_map_count, etc.)
         - package installation
         - SELinux → permissive
         - tmpfs configuration
         - /etc/hosts verification
 
-Step 2: sap_netweaver_preconfigure   ← Additional ABAP tuning
+Step 2: sap_netweaver_preconfigure                   ← Additional ABAP tuning
         - process limits (nproc, nofile)
         - ABAP-specific packages
 
-Step 3: sap_install_media_detect     ← Stage and extract installation media
-        - extract SWPM SAR
-        - extract HANA client SAR (must produce LABEL.ASC/LABELIDX.ASC)
-        - organize export/DATA_UNITS media
+Step 3: sap_hana_preconfigure                        ← Stage and extract installation media
+Step 4: hana_install                                 ← HANA HDB/00 via silent hdblcm 
 
-Step 4: sap_swpm                     ← S/4HANA AS ABAP installation
+Step 5: sap_swpm                                     ← S/4HANA AS ABAP installation
         - run SWPM silently against existing HANA DB
         - create SAP system (NW1)
         - create ABAP schema on HANA (SAPHANADB) via hdbuserstore
         - import ABAP content (NW_CreateDBandLoad, 59 packages)
 ```
 
----
+
 
 ## Known Issue
 
@@ -375,7 +343,7 @@ See docs/[troubleshooting.md](https://github.com/ramawahyuk/ansible-sap-rhel-aut
   ```yaml
   until: "(__sap_swpm_register_pids_sapinst.stdout | default('')) | length == 0"
   ```
----
+
 
 ## Acknowledgements
 
@@ -383,5 +351,5 @@ See docs/[troubleshooting.md](https://github.com/ramawahyuk/ansible-sap-rhel-aut
 - [fedora.linux_system_roles](https://galaxy.ansible.com/ui/repo/published/fedora/linux_system_roles/) — Linux system roles dependency
 - SAP Notes: 2002167, 2772999, 3108302 (RHEL 8 for SAP)
 
----
+
 
