@@ -9,7 +9,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 [![Collection](https://img.shields.io/badge/Collection-community.sap__install%201.9.2-orange)](https://galaxy.ansible.com/ui/repo/published/community/sap_install/)
 
----
+
 
 ## 📋 Table of Contents
 
@@ -23,7 +23,7 @@
 - [Installation Sequence](#installation-sequence)
 - [Troubleshooting](#troubleshooting)
 
----
+
 
 ## Overview
 
@@ -43,7 +43,6 @@ This project automates the full lifecycle of SAP software deployment using Ansib
 
 > **Note:** This automation connects SWPM to an already-running SAP HANA instance (installed separately, outside this repo's scope) rather than installing HANA itself. HANA client media detection/extraction is handled by `sap_install_media_detect`.
 
----
 
 ## Lab Architecture
 
@@ -66,7 +65,7 @@ This project automates the full lifecycle of SAP software deployment using Ansib
 
 > ⚠️ **TODO:** Confirm and update `saperp`'s IP/hostname resolution below — the host has two NICs (bridged `ens160` and NAT `ens224`), and SAP's registered hostname currently resolves via whichever adapter `/etc/hosts` points to. Verify this matches your Ansible inventory before relying on this table.
 
----
+
 ## Current Status
 
 | Phase | Status | Notes |
@@ -79,7 +78,7 @@ This project automates the full lifecycle of SAP software deployment using Ansib
 | SWPM (S/4HANA) Install | ✅ Tested | Silent SWPM against the HANA DB |
 | Post-Install Automation | 📋 Planned | Future phase |
 
----
+
 ## Prerequisites
 
 ### Controller Node (`ansnode`)
@@ -105,7 +104,7 @@ subscription-manager repos \
   --enable=rhel-8-for-x86_64-highavailability-rpms
 ```
 
----
+
 
 ## Project Directory Structure
 
@@ -147,7 +146,7 @@ subscription-manager repos \
             └── sap_install/             ← 12 SAP automation roles live here
 ```
 
----
+
 
 ## Quick Start
 
