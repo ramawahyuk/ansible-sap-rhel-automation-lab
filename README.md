@@ -18,7 +18,6 @@
 - [Prerequisites](#prerequisites)
 - [Project Directory Structure](#project-directory-structure)
 - [Quick Start](#quick-start)
-- [Configuration](#configuration)
 - [Playbooks](#playbooks)
 - [Ansible Vault](#ansible-vault)
 - [Installation Sequence](#installation-sequence)
@@ -236,10 +235,6 @@ ansible-playbook playbooks/os_info.yml
 
 
 `ansible.cfg` defines the default inventory and vault password file, so no `-i` or `--vault-password-file` flags are needed when running from the repo root. Expected outputs and screenshots: [docs/EXPECTED_OUTPUT.md](https://github.com/ramawahyuk/ansible-sap-rhel-automation-lab/blob/main/docs/EXPECTED_OUTPUT.md).
-
-### Network Configuration (Dual NIC Setup)
-
-This lab uses two network adapters on both the controller and SAP server to separate SAP traffic from internet access (needed for collection installation).
 
 
 ## Playbooks
